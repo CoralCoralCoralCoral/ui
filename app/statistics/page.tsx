@@ -1,30 +1,13 @@
 import React from "react";
+import Menu from "@/components/ui/menu";
+import Footer from "@/components/ui/footer";
 
 export default function StatisticsPage() {
-  const currentTime = "8:47 am"; // Placeholder for current time
 
   return (
     <div className="flex flex-col h-screen">
       {/* Top Menu Bar */}
-      <div className="bg-gray-200 w-full py-4 px-8 flex flex-row justify-center items-center">
-        <div className="flex space-x-14">
-          <button className="text-black font-medium border-b-2 border-transparent hover:border-red-500">
-            Map View
-          </button>
-          <button className="text-black font-medium border-b-2 border-red-500">
-            Statistics
-          </button>
-          <button className="text-black font-medium border-b-2 border-transparent hover:border-red-500">
-            Policy Overview
-          </button>
-          <button className="text-black font-medium border-b-2 border-transparent hover:border-red-500">
-            Research
-          </button>
-          <button className="text-black font-medium border-b-2 border-transparent hover:border-red-500">
-            Settings
-          </button>
-        </div>
-      </div>
+     <Menu />
 
       {/* Main Content */}
       <div className="flex flex-1 px-8 py-4 gap-8">
@@ -87,20 +70,7 @@ export default function StatisticsPage() {
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-200 w-full py-2 px-8 flex justify-between items-center">
-        {/* Current Time */}
-        <div className="text-black font-medium">{currentTime}</div>
-
-        {/* Control Buttons */}
-        <div className="flex space-x-4">
-          <button className="text-sm font-medium bg-gray-300 py-1 px-3 rounded-md shadow hover:bg-gray-400">
-            Speed: x2
-          </button>
-          <button className="text-sm font-medium bg-gray-300 py-1 px-3 rounded-md shadow hover:bg-gray-400">
-            Pause
-          </button>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }
