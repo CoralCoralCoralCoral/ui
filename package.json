@@ -16,6 +16,7 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@types/sockjs-client": "^1.5.4",
     "assert": "^2.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -28,6 +29,7 @@
     "react-dom": "^18",
     "react-map-gl": "^7.1.7",
     "react-router-dom": "^6.28.0",
+    "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },
