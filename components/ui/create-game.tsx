@@ -6,6 +6,20 @@ const CreateGameButton = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  let socket: WebSocket, stompClient: Client, id: string;
+
+  const pauseGame = async () => {
+    stompClient.publish({
+      destination: '/game/'+id+'/command',
+      headers: {},
+      body: `
+        {
+          "type": "pause",
+          "payload": "{}"
+        }
+      `,
+    })
+  }
 
   const handleClick = async () => {
     setLoading(true);
@@ -25,10 +39,10 @@ const CreateGameButton = () => {
 
       const data = await response.json();
       // Process the response data here
-      console.log(data['id'])
+      id = data['id']
 
-      const socket = new SockJS('http://localhost:8080/websocket')
-      const stompClient = new Client({
+      socket = new SockJS('http://localhost:8080/websocket')
+      stompClient = new Client({
         webSocketFactory: () => socket,
         debug: (str) => {
           console.log(str); // Debugging STOMP messages
@@ -37,7 +51,7 @@ const CreateGameButton = () => {
           console.log('Connected to WebSocket server');
           
           // Subscribe to a STOMP topic
-          stompClient.subscribe('/topic/game-update/'+data['id'], (message: IMessage) => {
+          stompClient.subscribe('/topic/game-update/'+id, (message: IMessage) => {
             console.log('Received message:', message.body);
           });
         },
