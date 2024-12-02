@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import SockJS from 'sockjs-client';
+import { Client, IMessage } from '@stomp/stompjs';
 
 const CreateGameButton = () => {
   const [responseMessage, setResponseMessage] = useState('');
@@ -23,7 +25,33 @@ const CreateGameButton = () => {
 
       const data = await response.json();
       // Process the response data here
-      console.log(data)
+      console.log(data['id'])
+
+      const socket = new SockJS('http://localhost:8080/websocket')
+      const stompClient = new Client({
+        webSocketFactory: () => socket,
+        debug: (str) => {
+          console.log(str); // Debugging STOMP messages
+        },
+        onConnect: () => {
+          console.log('Connected to WebSocket server');
+          
+          // Subscribe to a STOMP topic
+          stompClient.subscribe('/topic/game-update/'+data['id'], (message: IMessage) => {
+            console.log('Received message:', message.body);
+          });
+        },
+        onDisconnect: () => {
+          console.log('Disconnected from WebSocket');
+        },
+        onStompError: (frame) => {
+          console.error('STOMP error:', frame);
+        },
+      })
+
+      stompClient.activate();
+      
+
       setResponseMessage(data.message || 'Success!');
     } catch (error: any) {
       setError(error.message || 'An error occurred');
