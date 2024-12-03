@@ -41,7 +41,7 @@ jobs:
 
       # Step 7: Upload zip as a release asset
       - name: Upload zip file as a release asset
-        uses: softprops/action-gh-release@v2.1
+        uses: softprops/action-gh-release@v2.1.0
         with:
           files: |
             ui-static.zip
