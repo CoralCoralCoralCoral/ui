@@ -5,7 +5,7 @@ import Menu from "@/components/ui/menu"
 import Footer from "@/components/ui/footer"
 import Overview from "@/components/ui/overview"
 import GameMap from "@/components/ui/gameMap"
-import useMessaging from "@/hooks/useMessaging"
+import useMessaging from "@/hooks/useGame"
 
 export default function Home() {
     const { gameId, error, isConnected, sendCommand } = useMessaging()

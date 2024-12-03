@@ -4,7 +4,7 @@ import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
 import { MetricsUpdate, updateMetrics } from "@/store/metrics"
 
-const useMessaging = () => {
+const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [gameId, setGameId] = useState<string | null>(null)
@@ -117,4 +117,4 @@ const useMessaging = () => {
     return { error, isConnected, gameId, sendCommand }
 }
 
-export default useMessaging
+export default useGame

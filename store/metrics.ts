@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { createSlice } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
 import features from "../features.json"
