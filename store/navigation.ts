@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
-import features from "../features.json"
 
 export interface Jurisdiction {
     name: string

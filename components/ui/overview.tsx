@@ -6,13 +6,17 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import SidebarUI from "@/components/ui/sidebar-ui"
 import { useAppSelector } from "@/store/hooks"
-import CreateGameButton from "./create-game";
+import CreateGameButton from "./create-game"
 
 export default function Overview() {
     const [date, setDate] = React.useState<Date | undefined>(new Date())
 
     const selectedJurisdiction = useAppSelector(
         store => store.navigation.selectedJurisdiction
+    )
+
+    const metrics = useAppSelector(
+        store => store.metrics[selectedJurisdiction.code]
     )
 
     return (
@@ -38,7 +42,13 @@ export default function Overview() {
                 </div>
 
                 <div>
-                  <CreateGameButton />
+                    <span>
+                        Infected Population{" "}
+                        <span>
+                            {metrics[metrics.length - 1].infected_population}
+                        </span>
+                    </span>
+                    <CreateGameButton />
                 </div>
 
                 {/* Prog bars*/}

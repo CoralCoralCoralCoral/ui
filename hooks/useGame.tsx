@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
-import { MetricsUpdate, updateMetrics } from "@/store/metrics"
+import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
 
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -97,6 +97,9 @@ const useGame = () => {
             setGameId(data["id"])
             startSocket(data["id"])
         }
+
+        // clear metrics
+        dispatch(clearMetrics())
 
         startGame()
 

@@ -54,7 +54,7 @@ const initialState: MetricsState = features.reduce(
         return acc
     },
     {
-        GLOBAL: newMetrics()
+        GLOBAL: [newMetrics()]
     }
 )
 
@@ -71,11 +71,14 @@ export const metricsSlice = createSlice({
                     state[key].shift()
                 }
             })
+        },
+        clearMetrics: state => {
+            state = initialState
         }
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { updateMetrics } = metricsSlice.actions
+export const { updateMetrics, clearMetrics } = metricsSlice.actions
 
 export default metricsSlice.reducer
