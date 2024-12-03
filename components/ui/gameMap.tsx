@@ -144,7 +144,7 @@ export default function GameMap() {
                 />
                 <Layer
                     id="msoa-outline"
-                    beforeId="waterway-label"
+                    beforeId="selected-feature-outline"
                     {...featureOutline}
                     filter={selectedLadChildFilter}
                 />
