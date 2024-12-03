@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "./button";
 import pauseGame from "./create-game"
 
