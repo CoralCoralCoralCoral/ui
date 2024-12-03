@@ -40,12 +40,27 @@ jobs:
           zip -r ./ui-static.zip ./out
           tar czf ./ui-static.tar.gz ./out 
 
-      # Step 7: Upload zip as a release asset
-      - name: Upload zip file as a release asset
+      # Step 7: Get the latest commit hash
+      - name: Get latest commit hash
+        id: get_commit_hash
+        run: |
+          commit_hash=$(git rev-parse --short HEAD)
+          echo "Commit hash: $commit_hash"
+          echo "commit_hash=$commit_hash" >> $GITHUB_ENV
+
+      # Step 8: Create a Git tag based on the commit hash
+      - name: Create Git tag for the release
+        run: |
+          git tag ${{ env.commit_hash }}
+          git push origin ${{ env.commit_hash }}
+
+      # Step 9: Create a GitHub release and upload assets
+      - name: Create a GitHub release and upload assets
         uses: softprops/action-gh-release@v2.1.0
         with:
           files: |
             ui-static.zip
-            ui-statis.tar.gz
+            ui-static.tar.gz
         env:
+          GITHUB_RELEASE_TAG: ${{ env.commit_hash }}  
           GITHUB_TOKEN: ${{ secrets.ADD_TO_UI_RELEASES }}
