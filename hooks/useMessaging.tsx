@@ -25,7 +25,9 @@ const useMessaging = () => {
             }
 
             stompClient.current.publish({
-                destination: `/game/${gameId}/command`
+                destination: `/game/${gameId}/command`,
+                headers: {},
+                body: JSON.stringify(payload)
             })
         },
         [gameId]
