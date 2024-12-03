@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
