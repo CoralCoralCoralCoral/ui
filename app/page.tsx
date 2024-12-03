@@ -1,4 +1,4 @@
-// "use client"
+"use client"
 
 import React, { useCallback } from "react"
 import Menu from "@/components/ui/menu"
