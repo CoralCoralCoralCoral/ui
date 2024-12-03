@@ -53,6 +53,8 @@ jobs:
         run: |
           git tag ${{ env.commit_hash }}
           git push origin ${{ env.commit_hash }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADD_TO_UI_RELEASES }}
 
       # Step 9: Create a GitHub release and upload assets
       - name: Create a GitHub release and upload assets
