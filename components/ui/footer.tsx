@@ -1,4 +1,5 @@
 import { Button } from "./button";
+import pauseGame from "./create-game"
 
 
 export default function Footer() {
@@ -16,7 +17,7 @@ export default function Footer() {
           <Button className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500">
             Speed: x2
           </Button>
-          <Button className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500">
+          <Button className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500" onClick={pauseGame}>
             Pause
           </Button>
         </div>

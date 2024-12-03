@@ -5,6 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import SidebarUI from "@/components/ui/sidebar-ui";
+import CreateGameButton from "./create-game";
 
 export default function Overview() {
     const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -27,6 +28,10 @@ export default function Overview() {
               onSelect={setDate}
               className="rounded-md border"
             />
+          </div>
+
+          <div>
+            <CreateGameButton />
           </div>
 
           {/* Prog bars*/}
