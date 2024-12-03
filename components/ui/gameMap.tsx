@@ -1,16 +1,19 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import Map, {
-    Layer,
-    LngLat,
-    LngLatBounds,
-    Source,
-    LayerProps
-} from "react-map-gl"
+import { useEffect, useMemo, useRef, useState } from "react"
+import Map, { Layer, Source, LayerProps, MapRef } from "react-map-gl"
 import features from "../../features.json"
+import { MapMouseEvent } from "mapbox-gl"
+import bbox from "@turf/bbox"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { updateJurisdiction } from "@/store/navigation"
 
-const polygonFill: LayerProps = {
+const featureCollection = {
+    type: "FeatureCollection",
+    features
+}
+
+const ladFill: LayerProps = {
     type: "fill",
     paint: {
         "fill-color": "#088",
@@ -18,75 +21,140 @@ const polygonFill: LayerProps = {
     }
 }
 
-const polygonOutline: LayerProps = {
-    type: "line",
+const msoaFill: LayerProps = {
+    type: "fill",
     paint: {
-        "line-color": "#000",
-        "line-width": 0.5
+        "fill-color": "#3d72a6",
+        "fill-opacity": 0.4
     }
 }
 
+const featureOutline: LayerProps = {
+    type: "line",
+    paint: {
+        "line-width": 1.5,
+        "line-color": "#3d72a6"
+    }
+}
+
+const selectedfeatureOutline: LayerProps = {
+    type: "line",
+    paint: {
+        "line-width": 2,
+        "line-color": "#000"
+    }
+}
+
+// const bounds = [
+//     [-0.4314506136112186, 51.289821227010464],
+//     [0.17693687630512045, 51.623185093658435]
+// ]
+
 export default function GameMap() {
+    const mapRef = useRef<MapRef>()
+
     const [viewState, setViewState] = useState({
         longitude: -0.17464812922179362,
         latitude: 51.4839333603538,
         zoom: 9
     })
 
-    // const featureCollections = useMemo(() => {
-    //     return msoa.map(data => data.AdditionalData).slice(0, 50)
-    // }, [])
+    const dispatch = useAppDispatch()
 
-    const featuresLad = useMemo(
-        () => features.filter(f => f.properties.level == "lad"),
-        [features]
+    const selectedJurisdiction = useAppSelector(
+        store => store.navigation.selectedJurisdiction
     )
 
-    const featuresMsoa = useMemo(
-        () => features.filter(f => f.properties.level == "msoa"),
-        [features]
-    )
+    const selectedLad = useAppSelector(store => store.navigation.selectedLad)
+
+    const selectedMsoa = useAppSelector(store => store.navigation.selectedMsoa)
+
+    const selectedJurisdictionFilter = useMemo(() => {
+        return ["in", "code", selectedJurisdiction.code]
+    }, [selectedJurisdiction])
+
+    const selectedLadChildFilter = useMemo(() => {
+        return ["in", "parent", selectedLad]
+    }, [selectedLad])
 
     useEffect(() => {
-        console.log(viewState)
+        if (!mapRef.current) {
+            return
+        }
 
-        console.log(featuresLad)
-    }, [viewState, featuresLad])
+        const feature = features.find(
+            feature => feature.properties.code == selectedJurisdiction.code
+        )
 
-    const bounds = [
-        [-0.4314506136112186, 51.289821227010464],
-        [0.17693687630512045, 51.623185093658435]
-    ]
+        if (feature) {
+            // calculate the bounding box of the feature
+            const [minLng, minLat, maxLng, maxLat] = bbox(feature)
+
+            mapRef.current.fitBounds(
+                [
+                    [minLng, minLat],
+                    [maxLng, maxLat]
+                ],
+                { padding: 40, duration: 1000 }
+            )
+        } else {
+            console.log(`no feature named ${selectedJurisdiction.code}`)
+        }
+    }, [selectedJurisdiction])
+
+    const onClick = (event: MapMouseEvent) => {
+        const feature = event.features ? event.features[0] : undefined
+
+        if (feature) {
+            // update jurisdiction
+            dispatch(updateJurisdiction(feature.properties))
+        }
+    }
 
     return (
         <Map
+            ref={mapRef}
             mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
             initialViewState={viewState}
             style={{ width: "100%", height: "100%" }}
             mapStyle="mapbox://styles/mapbox/streets-v9"
             onMove={({ viewState }) => setViewState(viewState)}
+            onClick={onClick}
+            interactiveLayerIds={["msoa-fill", "lad-fill"]}
             // maxBounds={bounds}
         >
-            {featuresLad.map((feature, index) => {
-                console.log(feature)
-                return (
-                    <Source key={index} type="geojson" data={feature}>
-                        <Layer
-                            id={`${index}-fill`}
-                            key={`${index}-fill`}
-                            {...polygonFill}
-                        />
-                        <Layer
-                            id={`${index}-outline`}
-                            key={`${index}-outline`}
-                            {...polygonOutline}
-                        />
-                    </Source>
-                )
-            })}
-            {/* <Source key={'blah'} type="geojson" data={featureCollections[100]}>
-            <Layer {...polygonLayerStyle} />
-        </Source> */}
+            <Source type="geojson" data={featureCollection}>
+                <Layer
+                    id="lad-fill"
+                    beforeId="waterway-label"
+                    {...ladFill}
+                    filter={["in", "level", "lad"]}
+                />
+                <Layer
+                    id="lad-outline"
+                    beforeId="waterway-label"
+                    {...featureOutline}
+                    filter={["in", "level", "lad"]}
+                />
+                <Layer
+                    id="msoa-fill"
+                    beforeId="waterway-label"
+                    {...msoaFill}
+                    filter={selectedLadChildFilter}
+                />
+                <Layer
+                    id="msoa-outline"
+                    beforeId="selected-feature-outline"
+                    {...featureOutline}
+                    filter={selectedLadChildFilter}
+                />
+                <Layer
+                    id="selected-feature-outline"
+                    beforeId="waterway-label"
+                    {...selectedfeatureOutline}
+                    filter={selectedJurisdictionFilter}
+                />
+            </Source>
         </Map>
     )
 }
