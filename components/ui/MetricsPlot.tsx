@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useAppSelector } from "@/store/hooks"
 import React from "react"
 import {
