@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
 import metricsReducer from "./metrics"
+import policyReducer from "./policy"
 import navigationReducer from "./navigation"
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
@@ -13,7 +14,8 @@ export const makeStore = () => {
     return configureStore({
         reducer: {
             metrics: metricsReducer,
-            navigation: navigationReducer
+            navigation: navigationReducer,
+            policy: policyReducer
         }
     })
 }

@@ -10,16 +10,16 @@ import bbox from "@turf/bbox"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { updateJurisdiction } from "@/store/navigation"
 
-const featureCollection = {
-    type: "FeatureCollection",
-    features
-}
+// const featureCollection = {
+//     type: "FeatureCollection",
+//     features
+// }
 
 const ladFill: LayerProps = {
     type: "fill",
     paint: {
         "fill-color": "#088",
-        "fill-opacity": 0.4
+        "fill-opacity": 0.2
     }
 }
 
@@ -27,7 +27,7 @@ const msoaFill: LayerProps = {
     type: "fill",
     paint: {
         "fill-color": "#3d72a6",
-        "fill-opacity": 0.4
+        "fill-opacity": 0.2
     }
 }
 
@@ -47,10 +47,31 @@ const selectedfeatureOutline: LayerProps = {
     }
 }
 
-// const bounds = [
-//     [-0.4314506136112186, 51.289821227010464],
-//     [0.17693687630512045, 51.623185093658435]
-// ]
+const occurrenceLayer = {
+    id: "occurrence-layer",
+    type: "fill",
+    paint: {
+        "fill-color": [
+            "interpolate",
+            ["linear"],
+            ["get", "infected_population"],
+            0,
+            "#f0f0f0", // Light color for 0 occurrences
+            10,
+            "#ff0000", // Red for 10+ occurrences
+            100,
+            "#ff8000", // Orange for 100+ occurrences
+            1000,
+            "#800000" // Dark red for 1000+ occurrences
+        ],
+        "fill-opacity": 0.3
+    }
+}
+
+const globalBounds = [
+    -0.4314506136112186, 51.289821227010464, 0.17693687630512045,
+    51.623185093658435
+]
 
 export default function GameMap() {
     const mapRef = useRef<MapRef>()
@@ -71,13 +92,43 @@ export default function GameMap() {
 
     const selectedMsoa = useAppSelector(store => store.navigation.selectedMsoa)
 
+    const metrics = useAppSelector(store => store.metrics)
+
+    const featureCollection = useMemo(() => {
+        return {
+            type: "FeatureCollection",
+            features: features.map(feature => ({
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    ...metrics[feature.properties.code][
+                        metrics[feature.properties.code].length - 1
+                    ]
+                }
+            }))
+        }
+    }, [metrics])
+
     const selectedJurisdictionFilter = useMemo(() => {
         return ["in", "code", selectedJurisdiction.code]
     }, [selectedJurisdiction])
 
     const selectedLadChildFilter = useMemo(() => {
-        return ["in", "parent", selectedLad]
+        return ["in", "parent", selectedLad || ""]
     }, [selectedLad])
+
+    const onClick = (event: MapMouseEvent) => {
+        const feature = event.features ? event.features[0] : undefined
+
+        if (feature) {
+            // update jurisdiction
+            dispatch(updateJurisdiction(feature.properties))
+        }
+    }
+
+    useEffect(() => {
+        console.log(featureCollection)
+    }, [featureCollection])
 
     useEffect(() => {
         if (!mapRef.current) {
@@ -88,9 +139,11 @@ export default function GameMap() {
             feature => feature.properties.code == selectedJurisdiction.code
         )
 
-        if (feature) {
+        if (feature || selectedJurisdiction.code == "GLOBAL") {
             // calculate the bounding box of the feature
-            const [minLng, minLat, maxLng, maxLat] = bbox(feature)
+            const [minLng, minLat, maxLng, maxLat] = feature
+                ? bbox(feature)
+                : globalBounds
 
             mapRef.current.fitBounds(
                 [
@@ -103,15 +156,6 @@ export default function GameMap() {
             console.log(`no feature named ${selectedJurisdiction.code}`)
         }
     }, [selectedJurisdiction])
-
-    const onClick = (event: MapMouseEvent) => {
-        const feature = event.features ? event.features[0] : undefined
-
-        if (feature) {
-            // update jurisdiction
-            dispatch(updateJurisdiction(feature.properties))
-        }
-    }
 
     return (
         <Map
@@ -138,6 +182,7 @@ export default function GameMap() {
                     {...featureOutline}
                     filter={["in", "level", "lad"]}
                 />
+                <Layer beforeId="lad-outline" {...occurrenceLayer} />
                 <Layer
                     id="msoa-fill"
                     beforeId="waterway-label"
@@ -145,16 +190,16 @@ export default function GameMap() {
                     filter={selectedLadChildFilter}
                 />
                 <Layer
-                    id="msoa-outline"
-                    beforeId="selected-feature-outline"
-                    {...featureOutline}
-                    filter={selectedLadChildFilter}
-                />
-                <Layer
                     id="selected-feature-outline"
                     beforeId="waterway-label"
                     {...selectedfeatureOutline}
                     filter={selectedJurisdictionFilter}
+                />
+                <Layer
+                    id="msoa-outline"
+                    beforeId="selected-feature-outline"
+                    {...featureOutline}
+                    filter={selectedLadChildFilter}
                 />
             </Source>
         </Map>
