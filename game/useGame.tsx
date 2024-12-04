@@ -6,6 +6,7 @@ import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
 
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [gameId, setGameId] = useState<string | null>(null)
 
@@ -33,8 +34,22 @@ const useGame = () => {
         [gameId]
     )
 
-    useEffect(() => {
-        let isCancelled = false
+    const startGame = useCallback(() => {
+        if (isLoading) {
+            return
+        }
+
+        if (socket.current) {
+            // tear down socket connection
+            socket.current.close()
+            setIsConnected(false)
+        }
+
+        setGameId(null)
+        setError(null)
+
+        // clear metrics
+        dispatch(clearMetrics())
 
         const startSocket = async (gameId: string) => {
             socket.current = new SockJS("http://localhost:8080/websocket")
@@ -74,50 +89,38 @@ const useGame = () => {
             stompClient.current.activate()
         }
 
-        const startGame = async () => {
-            const response = await fetch("http://127.0.0.1:8080/game/create", {
-                method: "POST",
-                headers: []
-            })
+        const createGame = async () => {
+            try {
+                const response = await fetch(
+                    "http://127.0.0.1:8080/game/create",
+                    {
+                        method: "POST",
+                        headers: []
+                    }
+                )
 
-            if (isCancelled) {
-                return
-            }
+                if (!response.ok) {
+                    setError("failed to create game")
+                }
 
-            if (!response.ok) {
+                const data = await response.json()
+
+                // Process the response data here
+                setGameId(data["id"])
+                startSocket(data["id"])
+            } catch (err) {
+                console.error("failed to create game")
                 setError("failed to create game")
+            } finally {
+                setIsLoading(false)
             }
-
-            const data = await response.json()
-            if (isCancelled) {
-                return
-            }
-
-            // Process the response data here
-            setGameId(data["id"])
-            startSocket(data["id"])
         }
 
-        // clear metrics
-        dispatch(clearMetrics())
+        setIsLoading(true)
+        createGame()
+    }, [])
 
-        startGame()
-
-        return () => {
-            if (stompClient.current) {
-                // tear down stomp client
-            }
-
-            if (socket.current) {
-                // tear down socket connection
-                socket.current.close()
-            }
-
-            isCancelled = true
-        }
-    }, [socket, stompClient])
-
-    return { error, isConnected, gameId, sendCommand }
+    return { error, isLoading, isConnected, gameId, sendCommand, startGame }
 }
 
 export default useGame
