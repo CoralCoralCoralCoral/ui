@@ -88,7 +88,7 @@ export default function Overview() {
                 policy: modifiedPolicy
             }
         })
-    }, [policy, selectedJurisdiction])
+    }, [policy, selectedJurisdiction, sendCommand])
 
     const handleRemoveLockdown = useCallback(() => {
         const modifiedPolicy: Policy = policy
@@ -109,7 +109,7 @@ export default function Overview() {
                 policy: modifiedPolicy
             })
         )
-    }, [policy, selectedJurisdiction])
+    }, [policy, selectedJurisdiction, sendCommand])
 
     const handleApplyMaskMandate = useCallback(() => {
         const modifiedPolicy: Policy = policy
@@ -130,7 +130,7 @@ export default function Overview() {
                 policy: modifiedPolicy
             })
         )
-    }, [policy, selectedJurisdiction])
+    }, [policy, selectedJurisdiction, sendCommand])
 
     const handleRemoveMaskMandate = useCallback(() => {
         const modifiedPolicy: Policy = policy
@@ -151,7 +151,7 @@ export default function Overview() {
                 policy: modifiedPolicy
             })
         )
-    }, [policy, selectedJurisdiction])
+    }, [policy, selectedJurisdiction, sendCommand])
 
     return (
         <div className="relative w-96">
