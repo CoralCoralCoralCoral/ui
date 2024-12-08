@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
+import "mapbox-gl/dist/mapbox-gl.css"
 import StoreProvider from "../store/StoreProvider"
 import GameProvider from "@/game/GameProvider"
 
