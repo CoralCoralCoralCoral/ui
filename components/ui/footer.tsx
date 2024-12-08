@@ -12,8 +12,7 @@ export default function Footer() {
 
     const handlePause = useCallback(() => {
         sendCommand({
-            type: "pause",
-            payload: {}
+            type: "pause"
         })
 
         setIsPaused(true)
@@ -21,8 +20,7 @@ export default function Footer() {
 
     const handleResume = useCallback(() => {
         sendCommand({
-            type: "resume",
-            payload: {}
+            type: "resume"
         })
 
         setIsPaused(false)

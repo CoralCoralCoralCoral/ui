@@ -206,9 +206,11 @@ export default function Overview() {
                         />
 
                         <MetricsPlot
-                            metric="dead_population"
-                            title="Total Detected Cases"
+                            metric="hospitalized_population"
+                            title="Hospitalized Population"
                         />
+
+                        <MetricsPlot metric="dead_population" title="Deaths" />
                     </div>
 
                     {/* Calendar */}
