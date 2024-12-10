@@ -26,6 +26,14 @@ export default function Footer() {
         setIsPaused(false)
     }, [sendCommand])
 
+    const handleQuit = useCallback(() => {
+        sendCommand({
+            type: "quit"
+        })
+
+        
+    }, [sendCommand])
+
     return (
         <div className="bg-gray-200 w-full py-2 px-8 flex justify-between items-center">
             {/* Stats */}
@@ -38,16 +46,14 @@ export default function Footer() {
             {/* Controls */}
             <div className="w-full flex justify-between items-center py-2">
                 <div className="flex space-x-2">
-                    {!gameId && !isLoading && !isConnected && (
+                    {!gameId && !isLoading && !isConnected ? (
                         <Button
                             className="bg-green-400 py-1 px-3 rounded-md hover:bg-green-500"
                             onClick={startGame}
                         >
                             Start Game
                         </Button>
-                    )}
-
-                    {isPaused ? (
+                    ) : isPaused ? (
                         <Button
                             className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500"
                             onClick={handleResume}
@@ -66,9 +72,17 @@ export default function Footer() {
                 <div>
                     {isLoading && <span>Creating game. Please wait...</span>}
                     {gameId && !isLoading && isConnected && (
-                        <span>
+                        <div className="flex items-center space-x-4">
+                            <span>
                             Connected to game: <span>{gameId}</span>
-                        </span>
+                            </span>
+                            <Button
+                                className="bg-red-600 py-1 px-3 rounded-md hover:bg-red-700"
+                                onClick={handleQuit}
+                            >
+                                Quit
+                            </Button>
+                        </div>
                     )}
                 </div>
             </div>
