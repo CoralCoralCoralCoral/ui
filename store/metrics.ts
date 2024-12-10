@@ -5,6 +5,7 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import features from "../features.json"
 
 export interface Metrics {
+    day: number
     new_infections: number
     new_hospitalizations: number
     new_recoveries: number
