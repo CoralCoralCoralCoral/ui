@@ -30,6 +30,14 @@ const useGame = () => {
                 headers: {},
                 body: JSON.stringify(payload)
             })
+
+            if (payload.type == 'quit') {
+                if (socket.current) {
+                    stompClient.current.deactivate()
+                    setIsConnected(false)
+                    setGameId(null)
+                }
+            }
         },
         [gameId]
     )
@@ -39,10 +47,16 @@ const useGame = () => {
             return
         }
 
-        if (socket.current) {
+        /* if (socket.current) {
             // tear down socket connection
             socket.current.close()
             setIsConnected(false)
+        } */
+        if (stompClient.current) {
+            // tear down socket connection
+            stompClient.current.deactivate()
+            setIsConnected(false)
+            setGameId(null)
         }
 
         setGameId(null)

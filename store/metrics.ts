@@ -48,7 +48,7 @@ const newMetrics: () => Metrics = () => ({
     test_capacity: 0
 })
 
-const initialState: MetricsState = features.reduce(
+const initialState: () => MetricsState = () => features.reduce(
     (acc, feature) => {
         acc[feature.properties.code] = [newMetrics()]
         return acc
@@ -60,7 +60,7 @@ const initialState: MetricsState = features.reduce(
 
 export const metricsSlice = createSlice({
     name: "metrics",
-    initialState,
+    initialState: initialState(),
     reducers: {
         updateMetrics: (state, action: PayloadAction<MetricsUpdate>) => {
             Object.entries(action.payload).forEach(([key, metrics]) => {
@@ -72,9 +72,7 @@ export const metricsSlice = createSlice({
                 }
             })
         },
-        clearMetrics: state => {
-            state = initialState
-        }
+        clearMetrics: state => initialState()
     }
 })
 
