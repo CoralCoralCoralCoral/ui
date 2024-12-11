@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { useAppSelector } from "@/store/hooks"
+import { Metrics } from "@/store/metrics"
 import React from "react"
 import {
     LineChart,
@@ -28,8 +29,8 @@ const MetricsPlot: React.FC<MetricsPlotProps> = ({ metric, title }) => {
     )
 
     // Transform data for plotting
-    const plotData = data.map((entry: any, index: number) => ({
-        day:  `Day ${entry.day}`, // Generate an X-axis label
+    const plotData = data.map((entry: Metrics, index: number) => ({
+        day: `${entry["day"]}`, // Generate an X-axis label
         value: entry[metric] // Extract the metric to plot
     }))
 

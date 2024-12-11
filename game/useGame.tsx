@@ -7,6 +7,7 @@ import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isPaused, setIsPaused] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [gameId, setGameId] = useState<string | null>(null)
 
@@ -31,8 +32,8 @@ const useGame = () => {
                 body: JSON.stringify(payload)
             })
 
-            if (payload.type == 'quit') {
-                if (socket.current) {
+            if (payload.type == "quit") {
+                if (stompClient.current) {
                     stompClient.current.deactivate()
                     setIsConnected(false)
                     setGameId(null)
@@ -42,18 +43,29 @@ const useGame = () => {
         [gameId]
     )
 
+    const pauseGame = useCallback(() => {
+        sendCommand({
+            type: "pause"
+        })
+
+        setIsPaused(true)
+    }, [sendCommand, setIsPaused])
+
+    const resumeGame = useCallback(() => {
+        sendCommand({
+            type: "resume"
+        })
+
+        setIsPaused(false)
+    }, [sendCommand])
+
     const startGame = useCallback(() => {
         if (isLoading) {
             return
         }
 
-        /* if (socket.current) {
-            // tear down socket connection
-            socket.current.close()
-            setIsConnected(false)
-        } */
         if (stompClient.current) {
-            // tear down socket connection
+            // tear down stompClient connection
             stompClient.current.deactivate()
             setIsConnected(false)
             setGameId(null)
@@ -134,7 +146,17 @@ const useGame = () => {
         createGame()
     }, [])
 
-    return { error, isLoading, isConnected, gameId, sendCommand, startGame }
+    return {
+        error,
+        isLoading,
+        isConnected,
+        isPaused,
+        gameId,
+        sendCommand,
+        startGame,
+        pauseGame,
+        resumeGame
+    }
 }
 
 export default useGame
