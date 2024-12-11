@@ -3,6 +3,7 @@
 import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
 import { useCallback, useState } from "react"
+import CurrencyMonitor from "./currency"
 
 export default function Footer() {
     const { gameId, isLoading, isConnected, startGame, sendCommand } =
@@ -73,6 +74,7 @@ export default function Footer() {
                     {isLoading && <span>Creating game. Please wait...</span>}
                     {gameId && !isLoading && isConnected && (
                         <div className="flex items-center space-x-4">
+                            <CurrencyMonitor></CurrencyMonitor>
                             <span>
                             Connected to game: <span>{gameId}</span>
                             </span>
