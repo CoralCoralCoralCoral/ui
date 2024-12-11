@@ -15,6 +15,8 @@ import features from "../../features.json"
 import MetricsPlot from "./MetricsPlot"
 import { newPolicy, Policy, setPolicy } from "@/store/policy"
 import { useGameContext } from "@/game/GameContext"
+import Oracle from "./Oracle"
+import { Switch } from "@radix-ui/themes"
 
 export default function Overview() {
     const { sendCommand } = useGameContext()
@@ -303,6 +305,10 @@ export default function Overview() {
                             </Button>
                         )}
                     </div>
+                    {/* <div className="flex w-full mt-8">
+                        <Oracle />
+                    </div> */}
+                    <Oracle />
                 </div>
             </div>
         </div>

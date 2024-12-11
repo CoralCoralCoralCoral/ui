@@ -32,6 +32,7 @@ export interface MetricsUpdate {
 }
 
 const newMetrics: () => Metrics = () => ({
+    day: 0,
     new_infections: 0,
     new_hospitalizations: 0,
     new_recoveries: 0,
@@ -49,15 +50,16 @@ const newMetrics: () => Metrics = () => ({
     test_capacity: 0
 })
 
-const initialState: () => MetricsState = () => features.reduce(
-    (acc, feature) => {
-        acc[feature.properties.code] = [newMetrics()]
-        return acc
-    },
-    {
-        GLOBAL: [newMetrics()]
-    }
-)
+const initialState: () => MetricsState = () =>
+    features.reduce(
+        (acc, feature) => {
+            acc[feature.properties.code] = [newMetrics()]
+            return acc
+        },
+        {
+            GLOBAL: [newMetrics()]
+        }
+    )
 
 export const metricsSlice = createSlice({
     name: "metrics",

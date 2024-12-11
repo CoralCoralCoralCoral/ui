@@ -2,36 +2,24 @@
 
 import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
 
 export default function Footer() {
-    const { gameId, isLoading, isConnected, startGame, sendCommand } =
-        useGameContext()
-
-    const [isPaused, setIsPaused] = useState(false)
-
-    const handlePause = useCallback(() => {
-        sendCommand({
-            type: "pause"
-        })
-
-        setIsPaused(true)
-    }, [sendCommand])
-
-    const handleResume = useCallback(() => {
-        sendCommand({
-            type: "resume"
-        })
-
-        setIsPaused(false)
-    }, [sendCommand])
+    const {
+        gameId,
+        isLoading,
+        isConnected,
+        isPaused,
+        startGame,
+        sendCommand,
+        pauseGame,
+        resumeGame
+    } = useGameContext()
 
     const handleQuit = useCallback(() => {
         sendCommand({
             type: "quit"
         })
-
-        
     }, [sendCommand])
 
     return (
@@ -56,14 +44,14 @@ export default function Footer() {
                     ) : isPaused ? (
                         <Button
                             className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500"
-                            onClick={handleResume}
+                            onClick={resumeGame}
                         >
                             Resume
                         </Button>
                     ) : (
                         <Button
                             className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500"
-                            onClick={handlePause}
+                            onClick={pauseGame}
                         >
                             Pause
                         </Button>
@@ -74,7 +62,7 @@ export default function Footer() {
                     {gameId && !isLoading && isConnected && (
                         <div className="flex items-center space-x-4">
                             <span>
-                            Connected to game: <span>{gameId}</span>
+                                Connected to game: <span>{gameId}</span>
                             </span>
                             <Button
                                 className="bg-red-600 py-1 px-3 rounded-md hover:bg-red-700"
