@@ -10,11 +10,6 @@ import bbox from "@turf/bbox"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { updateJurisdiction } from "@/store/navigation"
 
-// const featureCollection = {
-//     type: "FeatureCollection",
-//     features
-// }
-
 const ladFill: LayerProps = {
     type: "fill",
     paint: {

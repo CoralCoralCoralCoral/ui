@@ -87,15 +87,6 @@ export default function Oracle() {
         }
     }, [nextAlert, pauseGame])
 
-    // return nextAlert && nextAlert.type == "spread" ? (
-    //     <InfectionSpreadAlert
-    //         feature={nextAlert.feature}
-    //         dismiss={handleDismiss}
-    //     />
-    // ) : nextAlert && nextAlert.type == "dead" ? (
-    //     <FirstDeathAlert feature={nextAlert.feature} dismiss={handleDismiss} />
-    // ) : null
-
     return nextAlert ? (
         <div className="fixed inset-0">
             <div className="relative w-full h-full">
