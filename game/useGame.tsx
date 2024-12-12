@@ -93,6 +93,7 @@ const useGame = () => {
         }
 
         setGameId(null)
+        setIsInitialized(false)
         setError(null)
 
         // clear metrics
