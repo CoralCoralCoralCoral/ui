@@ -3,6 +3,7 @@ import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
 import { clearMetrics, updateMetrics } from "@/store/metrics"
+import { clearPolicies, updatePolicy } from "@/store/policy"
 
 interface Notification {
     type: "event" | "metrics"
@@ -37,6 +38,10 @@ const useGame = () => {
             const event: Event = body.payload
             if (event.type == "simulation_initialized") {
                 setIsInitialized(true)
+            }
+
+            if (event.type == "policy_update") {
+                dispatch(updatePolicy(event.payload))
             }
         }
     }, [])
@@ -94,10 +99,12 @@ const useGame = () => {
 
         setGameId(null)
         setIsInitialized(false)
+        setIsPaused(false)
         setError(null)
 
         // clear metrics
         dispatch(clearMetrics())
+        dispatch(clearPolicies())
 
         const startSocket = async (gameId: string) => {
             socket.current = new SockJS("http://localhost:8080/websocket")
