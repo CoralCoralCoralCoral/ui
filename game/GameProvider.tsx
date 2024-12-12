@@ -14,6 +14,7 @@ const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         error,
         isLoading,
         isConnected,
+        isInitialized,
         isPaused,
         gameId,
         sendCommand,
@@ -27,6 +28,7 @@ const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
             value={{
                 error,
                 isConnected,
+                isInitialized,
                 isLoading,
                 isPaused,
                 gameId,

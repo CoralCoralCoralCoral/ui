@@ -4,8 +4,19 @@ import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
 import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
 
+interface Notification {
+    type: "event" | "metrics"
+    payload: any
+}
+
+interface Event {
+    type: string
+    payload: any
+}
+
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
+    const [isInitialized, setIsInitialized] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isPaused, setIsPaused] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
@@ -16,8 +27,18 @@ const useGame = () => {
 
     const dispatch = useAppDispatch()
 
-    const handleMessage = useCallback((body: MetricsUpdate) => {
-        dispatch(updateMetrics(body))
+    const handleMessage = useCallback((body: Notification) => {
+        if (body.type == "metrics") {
+            dispatch(updateMetrics(body.payload))
+            return
+        }
+
+        if (body.type == "event") {
+            const event: Event = body.payload
+            if (event.type == "simulation_initialized") {
+                setIsInitialized(true)
+            }
+        }
     }, [])
 
     const sendCommand = useCallback(
@@ -150,6 +171,7 @@ const useGame = () => {
         error,
         isLoading,
         isConnected,
+        isInitialized,
         isPaused,
         gameId,
         sendCommand,

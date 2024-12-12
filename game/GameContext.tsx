@@ -5,6 +5,7 @@ export interface GameContextType {
     error: string | null
     isLoading: boolean
     isConnected: boolean
+    isInitialized: boolean
     isPaused: boolean
     gameId: string | null
     sendCommand: (payload: any) => void

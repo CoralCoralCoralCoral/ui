@@ -8,6 +8,7 @@ export default function Footer() {
     const {
         gameId,
         isLoading,
+        isInitialized,
         isConnected,
         isPaused,
         startGame,
@@ -59,7 +60,10 @@ export default function Footer() {
                 </div>
                 <div>
                     {isLoading && <span>Creating game. Please wait...</span>}
-                    {gameId && !isLoading && isConnected && (
+                    {gameId && !isLoading && isConnected && !isInitialized && (
+                        <span>Initializing game. Please wait...</span>
+                    )}
+                    {gameId && !isLoading && isConnected && isInitialized && (
                         <div className="flex items-center space-x-4">
                             <span>
                                 Connected to game: <span>{gameId}</span>

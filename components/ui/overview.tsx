@@ -215,34 +215,6 @@ export default function Overview() {
                         <MetricsPlot metric="dead_population" title="Deaths" />
                     </div>
 
-                    {/* Calendar */}
-                    {/* <div className="mb-4">
-                    <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        className="rounded-md border"
-                    />
-                    </div> */}
-
-                    {/* Prog bars*/}
-                    {/* <div className="flex flex-col gap-3 mt-0">
-                        <div>
-                            <p className="text-sm font-medium">Vaccine Research</p>
-                            <Progress value={37} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">Policy Acceptance</p>
-                            <Progress value={14} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">
-                                Gov. Approval Rating
-                            </p>
-                            <Progress value={73} />
-                        </div>
-                    </div> */}
-
                     <div className="flex flex-col py-4">
                         <h2 className="text-lg">Policies in Effect</h2>
                         {policy ? (
