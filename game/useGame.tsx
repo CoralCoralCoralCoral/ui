@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
-import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
+import { clearMetrics, updateMetrics } from "@/store/metrics"
 
 interface Notification {
     type: "event" | "metrics"
@@ -110,7 +110,7 @@ const useGame = () => {
 
                     // Subscribe to a STOMP topic
                     stompClient.current?.subscribe(
-                        "/topic/game-update/" + gameId,
+                        "/topic/notification/" + gameId,
                         (message: IMessage) => {
                             handleMessage(JSON.parse(message.body))
                         }
