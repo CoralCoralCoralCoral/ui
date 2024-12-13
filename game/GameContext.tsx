@@ -5,9 +5,13 @@ export interface GameContextType {
     error: string | null
     isLoading: boolean
     isConnected: boolean
+    isInitialized: boolean
+    isPaused: boolean
     gameId: string | null
     sendCommand: (payload: any) => void
     startGame: () => void
+    pauseGame: () => void
+    resumeGame: () => void
 }
 
 // Create the context with a default value of `undefined`

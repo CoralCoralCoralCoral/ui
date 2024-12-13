@@ -5,10 +5,12 @@ import Menu from "@/components/ui/menu"
 import Footer from "@/components/ui/footer"
 import Overview from "@/components/ui/overview"
 import GameMap from "@/components/ui/gameMap"
+// import Oracle from "@/components/ui/Oracle"
 
 export default function Home() {
     return (
         <div className="h-screen w-full flex">
+            {/* <Oracle /> */}
             <div className="flex flex-1 flex-col h-screen">
                 {/* Menu Bar */}
                 <div className="relative">

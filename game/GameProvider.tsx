@@ -10,18 +10,32 @@ interface GameProviderProps {
 }
 
 const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
-    const { error, isLoading, isConnected, gameId, sendCommand, startGame } =
-        useGame()
+    const {
+        error,
+        isLoading,
+        isConnected,
+        isInitialized,
+        isPaused,
+        gameId,
+        sendCommand,
+        startGame,
+        pauseGame,
+        resumeGame
+    } = useGame()
 
     return (
         <GameContext.Provider
             value={{
                 error,
                 isConnected,
+                isInitialized,
                 isLoading,
+                isPaused,
                 gameId,
                 sendCommand,
-                startGame
+                startGame,
+                pauseGame,
+                resumeGame
             }}
         >
             {children}

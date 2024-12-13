@@ -2,12 +2,25 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
-import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
 import { resetCurrency } from "@/store/currency"
+import { clearMetrics, updateMetrics } from "@/store/metrics"
+import { clearPolicies, updatePolicy } from "@/store/policy"
+
+interface Notification {
+    type: "event" | "metrics"
+    payload: any
+}
+
+interface Event {
+    type: string
+    payload: any
+}
 
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
+    const [isInitialized, setIsInitialized] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isPaused, setIsPaused] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const [gameId, setGameId] = useState<string | null>(null)
 
@@ -16,8 +29,22 @@ const useGame = () => {
 
     const dispatch = useAppDispatch()
 
-    const handleMessage = useCallback((body: MetricsUpdate) => {
-        dispatch(updateMetrics(body))
+    const handleMessage = useCallback((body: Notification) => {
+        if (body.type == "metrics") {
+            dispatch(updateMetrics(body.payload))
+            return
+        }
+
+        if (body.type == "event") {
+            const event: Event = body.payload
+            if (event.type == "simulation_initialized") {
+                setIsInitialized(true)
+            }
+
+            if (event.type == "policy_update") {
+                dispatch(updatePolicy(event.payload))
+            }
+        }
     }, [])
 
     const sendCommand = useCallback(
@@ -32,8 +59,8 @@ const useGame = () => {
                 body: JSON.stringify(payload)
             })
 
-            if (payload.type == 'quit') {
-                if (socket.current) {
+            if (payload.type == "quit") {
+                if (stompClient.current) {
                     stompClient.current.deactivate()
                     setIsConnected(false)
                     setGameId(null)
@@ -43,29 +70,43 @@ const useGame = () => {
         [gameId]
     )
 
+    const pauseGame = useCallback(() => {
+        sendCommand({
+            type: "pause"
+        })
+
+        setIsPaused(true)
+    }, [sendCommand, setIsPaused])
+
+    const resumeGame = useCallback(() => {
+        sendCommand({
+            type: "resume"
+        })
+
+        setIsPaused(false)
+    }, [sendCommand])
+
     const startGame = useCallback(() => {
         if (isLoading) {
             return
         }
 
-        /* if (socket.current) {
-            // tear down socket connection
-            socket.current.close()
-            setIsConnected(false)
-        } */
         if (stompClient.current) {
-            // tear down socket connection
+            // tear down stompClient connection
             stompClient.current.deactivate()
             setIsConnected(false)
             setGameId(null)
         }
 
         setGameId(null)
+        setIsInitialized(false)
+        setIsPaused(false)
         setError(null)
 
         // clear metrics
         dispatch(clearMetrics())
         dispatch(resetCurrency())
+        dispatch(clearPolicies())
 
         const startSocket = async (gameId: string) => {
             socket.current = new SockJS("http://localhost:8080/websocket")
@@ -79,7 +120,7 @@ const useGame = () => {
 
                     // Subscribe to a STOMP topic
                     stompClient.current?.subscribe(
-                        "/topic/game-update/" + gameId,
+                        "/topic/notification/" + gameId,
                         (message: IMessage) => {
                             handleMessage(JSON.parse(message.body))
                         }
@@ -136,7 +177,18 @@ const useGame = () => {
         createGame()
     }, [])
 
-    return { error, isLoading, isConnected, gameId, sendCommand, startGame }
+    return {
+        error,
+        isLoading,
+        isConnected,
+        isInitialized,
+        isPaused,
+        gameId,
+        sendCommand,
+        startGame,
+        pauseGame,
+        resumeGame
+    }
 }
 
 export default useGame

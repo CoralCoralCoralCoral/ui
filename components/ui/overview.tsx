@@ -13,8 +13,10 @@ import { ArrowLeft } from "lucide-react"
 import { globalJurisdiction, updateJurisdiction } from "@/store/navigation"
 import features from "../../features.json"
 import MetricsPlot from "./MetricsPlot"
-import { newPolicy, Policy, setPolicy } from "@/store/policy"
+import { newPolicy, Policy, updatePolicy } from "@/store/policy"
 import { useGameContext } from "@/game/GameContext"
+import Oracle from "./Oracle"
+import { Switch } from "@radix-ui/themes"
 
 export default function Overview() {
     const { sendCommand } = useGameContext()
@@ -28,21 +30,9 @@ export default function Overview() {
     const selectedLad = useAppSelector(store => store.navigation.selectedLad)
     const selectedMsoa = useAppSelector(store => store.navigation.selectedMsoa)
 
-    const policies = useAppSelector(store => store.policy)
-
-    const policy = useMemo(() => {
-        let p = policies["GLOBAL"]
-
-        if (!p && selectedJurisdiction.parent) {
-            p = policies[selectedJurisdiction.parent]
-        }
-
-        if (!p) {
-            p = policies[selectedJurisdiction.code]
-        }
-
-        return p
-    }, [policies, selectedJurisdiction])
+    const policy = useAppSelector(
+        store => store.policy[selectedJurisdiction.code]
+    )
 
     const parentJurisdiction = useMemo(() => {
         const parent = features.find(
@@ -61,97 +51,44 @@ export default function Overview() {
     }, [policy])
 
     const handleApplyLockdown = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_lockdown: true }
-            : { ...newPolicy(), is_lockdown: true }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_lockdown: true
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-
-        // debugging
-        console.log({
-            type: "apply_jurisdiction_policy",
-            payload: {
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            }
-        })
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleRemoveLockdown = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_lockdown: false }
-            : { ...newPolicy(), is_lockdown: false }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_lockdown: false
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleApplyMaskMandate = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_mask_mandate: true }
-            : { ...newPolicy(), is_mask_mandate: true }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_mask_mandate: true
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleRemoveMaskMandate = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_mask_mandate: false }
-            : { ...newPolicy(), is_mask_mandate: false }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_mask_mandate: false
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     return (
         <div className="relative w-96">
@@ -212,34 +149,6 @@ export default function Overview() {
 
                         <MetricsPlot metric="dead_population" title="Deaths" />
                     </div>
-
-                    {/* Calendar */}
-                    {/* <div className="mb-4">
-                    <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        className="rounded-md border"
-                    />
-                    </div> */}
-
-                    {/* Prog bars*/}
-                    {/* <div className="flex flex-col gap-3 mt-0">
-                        <div>
-                            <p className="text-sm font-medium">Vaccine Research</p>
-                            <Progress value={37} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">Policy Acceptance</p>
-                            <Progress value={14} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">
-                                Gov. Approval Rating
-                            </p>
-                            <Progress value={73} />
-                        </div>
-                    </div> */}
 
                     <div className="flex flex-col py-4">
                         <h2 className="text-lg">Policies in Effect</h2>
@@ -303,6 +212,10 @@ export default function Overview() {
                             </Button>
                         )}
                     </div>
+                    {/* <div className="flex w-full mt-8">
+                        <Oracle />
+                    </div> */}
+                    <Oracle />
                 </div>
             </div>
         </div>
