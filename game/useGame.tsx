@@ -3,6 +3,7 @@ import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
 import { clearMetrics, MetricsUpdate, updateMetrics } from "@/store/metrics"
+import { resetCurrency } from "@/store/currency"
 
 const useGame = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -64,6 +65,7 @@ const useGame = () => {
 
         // clear metrics
         dispatch(clearMetrics())
+        dispatch(resetCurrency())
 
         const startSocket = async (gameId: string) => {
             socket.current = new SockJS("http://localhost:8080/websocket")
