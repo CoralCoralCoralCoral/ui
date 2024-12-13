@@ -5,53 +5,60 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import features from "../features.json"
 
 export interface PolicyState {
-    [key: string]: Policy | null
+    [key: string]: Policy
 }
 
 export interface Policy {
     is_mask_mandate: boolean
     is_lockdown: boolean
     test_strategy: "none" | "symptomatic" | "everyone"
+    test_capacity_multiplier: number
 }
 
-export interface ApplyJurisdictionPolicyCommand {
+export interface PolicyUpdate {
     jurisdiction_id: string
-    policy: Policy | null
+    is_mask_mandate: boolean
+    is_lockdown: boolean
+    test_strategy: "none" | "symptomatic" | "everyone"
+    test_capacity_multiplier: number
 }
-
-const initialState: PolicyState = features.reduce(
-    (acc, feature) => {
-        acc[feature.properties.code] = null
-        return acc
-    },
-    {
-        GLOBAL: null
-    }
-)
 
 export const newPolicy: () => Policy = () => ({
     is_mask_mandate: false,
     is_lockdown: false,
-    test_strategy: "everyone"
+    test_strategy: "none",
+    test_capacity_multiplier: 0
 })
+
+const initialState: () => PolicyState = () =>
+    features.reduce(
+        (acc, feature) => {
+            acc[feature.properties.code] = newPolicy()
+            return acc
+        },
+        {
+            GLOBAL: newPolicy()
+        }
+    )
 
 export const policiesSlice = createSlice({
     name: "policies",
-    initialState,
+    initialState: initialState(),
     reducers: {
-        setPolicy: (
-            state,
-            action: PayloadAction<ApplyJurisdictionPolicyCommand>
-        ) => {
-            state[action.payload.jurisdiction_id] = action.payload.policy
+        updatePolicy: (state, action: PayloadAction<PolicyUpdate>) => {
+            state[action.payload.jurisdiction_id] = {
+                is_mask_mandate: action.payload.is_mask_mandate,
+                is_lockdown: action.payload.is_lockdown,
+                test_strategy: action.payload.test_strategy,
+                test_capacity_multiplier:
+                    action.payload.test_capacity_multiplier
+            }
         },
-        clearPolicy: state => {
-            state = initialState
-        }
+        clearPolicies: state => initialState()
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { setPolicy, clearPolicy } = policiesSlice.actions
+export const { updatePolicy, clearPolicies } = policiesSlice.actions
 
 export default policiesSlice.reducer

@@ -13,7 +13,7 @@ import { ArrowLeft } from "lucide-react"
 import { globalJurisdiction, updateJurisdiction } from "@/store/navigation"
 import features from "../../features.json"
 import MetricsPlot from "./MetricsPlot"
-import { newPolicy, Policy, setPolicy } from "@/store/policy"
+import { newPolicy, Policy, updatePolicy } from "@/store/policy"
 import { useGameContext } from "@/game/GameContext"
 import Oracle from "./Oracle"
 import { Switch } from "@radix-ui/themes"
@@ -30,21 +30,9 @@ export default function Overview() {
     const selectedLad = useAppSelector(store => store.navigation.selectedLad)
     const selectedMsoa = useAppSelector(store => store.navigation.selectedMsoa)
 
-    const policies = useAppSelector(store => store.policy)
-
-    const policy = useMemo(() => {
-        let p = policies["GLOBAL"]
-
-        if (!p && selectedJurisdiction.parent) {
-            p = policies[selectedJurisdiction.parent]
-        }
-
-        if (!p) {
-            p = policies[selectedJurisdiction.code]
-        }
-
-        return p
-    }, [policies, selectedJurisdiction])
+    const policy = useAppSelector(
+        store => store.policy[selectedJurisdiction.code]
+    )
 
     const parentJurisdiction = useMemo(() => {
         const parent = features.find(
@@ -63,97 +51,44 @@ export default function Overview() {
     }, [policy])
 
     const handleApplyLockdown = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_lockdown: true }
-            : { ...newPolicy(), is_lockdown: true }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_lockdown: true
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-
-        // debugging
-        console.log({
-            type: "apply_jurisdiction_policy",
-            payload: {
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            }
-        })
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleRemoveLockdown = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_lockdown: false }
-            : { ...newPolicy(), is_lockdown: false }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_lockdown: false
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleApplyMaskMandate = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_mask_mandate: true }
-            : { ...newPolicy(), is_mask_mandate: true }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_mask_mandate: true
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     const handleRemoveMaskMandate = useCallback(() => {
-        const modifiedPolicy: Policy = policy
-            ? { ...policy, is_mask_mandate: false }
-            : { ...newPolicy(), is_mask_mandate: false }
-
         sendCommand({
-            type: "apply_jurisdiction_policy",
+            type: "apply_policy_update",
             payload: {
                 jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
+                is_mask_mandate: false
             }
         })
-
-        dispatch(
-            setPolicy({
-                jurisdiction_id: selectedJurisdiction.code,
-                policy: modifiedPolicy
-            })
-        )
-    }, [policy, selectedJurisdiction, sendCommand])
+    }, [selectedJurisdiction, sendCommand])
 
     return (
         <div className="relative w-96">
