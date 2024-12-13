@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
+import { resetCurrency } from "@/store/currency"
 import { clearMetrics, updateMetrics } from "@/store/metrics"
 import { clearPolicies, updatePolicy } from "@/store/policy"
 
@@ -104,6 +105,7 @@ const useGame = () => {
 
         // clear metrics
         dispatch(clearMetrics())
+        dispatch(resetCurrency())
         dispatch(clearPolicies())
 
         const startSocket = async (gameId: string) => {
