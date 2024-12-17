@@ -14,14 +14,14 @@ export const currencySlice = createSlice({
     name: "currency",
     initialState,
     reducers: {
-        increment: (state, action: PayloadAction<number>) => {
-            state.currency += action.payload
-        },
-        resetCurrency: state => initialState
+        resetCurrency: state => initialState,
+        setCurrency: (state, action: PayloadAction<number>) => {
+            state.currency = action.payload
+        }
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, resetCurrency } = currencySlice.actions
+export const { increment, resetCurrency, setCurrency } = currencySlice.actions
 
 export default currencySlice.reducer

@@ -79,13 +79,13 @@ export default function Oracle() {
     useEffect(() => {
         if (nextAlert) {
             // debugging
-            console.log("ORACLE IS TRIGGERED")
-            console.log(nextAlert)
+            // console.log("ORACLE IS TRIGGERED")
+            // console.log(nextAlert)
 
             pauseGame()
             dispatch(updateJurisdiction(nextAlert.feature.properties))
         }
-    }, [nextAlert, pauseGame])
+    }, [nextAlert, pauseGame, dispatch])
 
     return nextAlert ? (
         <div className="fixed inset-0">

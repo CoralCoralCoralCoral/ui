@@ -5,6 +5,7 @@ import { useAppDispatch } from "@/store/hooks"
 import { resetCurrency } from "@/store/currency"
 import { clearMetrics, updateMetrics } from "@/store/metrics"
 import { clearPolicies, updatePolicy } from "@/store/policy"
+import { setCurrency } from "@/store/currency"
 
 interface Notification {
     type: "event" | "metrics"
@@ -43,6 +44,10 @@ const useGame = () => {
 
             if (event.type == "policy_update") {
                 dispatch(updatePolicy(event.payload))
+            }
+
+            if (event.type == "budget_update") {
+                dispatch(setCurrency(event.payload.current_budget))
             }
         }
     }, [])
