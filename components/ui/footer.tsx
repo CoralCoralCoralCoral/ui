@@ -4,6 +4,7 @@ import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
 import { useCallback, useState } from "react"
 import CurrencyMonitor from "./currency"
+import GameConfig from "../NewGame"
 
 export default function Footer() {
     const {
@@ -36,6 +37,8 @@ export default function Footer() {
             {/* Controls */}
             <div className="w-full flex justify-between items-center py-2">
                 <div className="flex space-x-2">
+                    <GameConfig />
+
                     {!gameId && !isLoading && !isConnected ? (
                         <Button
                             className="bg-green-400 py-1 px-3 rounded-md hover:bg-green-500"
