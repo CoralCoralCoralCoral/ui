@@ -16,7 +16,7 @@ const BudgetMonitor = () => {
   return (
     <div className="flex items-center space-x-4">
       <span>
-        Current Budget: {formatBudget(budgetStore.budget)}
+        Current Budget: {formatBudget(budgetStore.budget).replace("+", "")}
       </span>
       <div className="flex-stack">
         <span> 
@@ -26,6 +26,9 @@ const BudgetMonitor = () => {
           7 Day Delta: {formatBudget(budgetStore.weeklyDelta)}
         </span>
       </div>
+      <span>
+          7 Day Budget Projection: {formatBudget(budgetStore.weekProjection).replace("+", "")}
+      </span>
     </div>
   )
 }

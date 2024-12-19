@@ -7,15 +7,17 @@ export interface BudgetState {
     day: number
     dailyDelta: number
     weeklyDelta: number
-    data: number[7]
+    deltaData: number[7]
+    weekProjection: number
 }
 
 const initialState: BudgetState = {
     budget: 1000000,
     day: 0,
-    data: [0,0,0,0,0,0,0],
+    deltaData: [0,0,0,0,0,0,0],
     dailyDelta: 0,
     weeklyDelta: 0,
+    weekProjection: 0,
 }
 
 export const budgetSlice = createSlice({
@@ -27,8 +29,10 @@ export const budgetSlice = createSlice({
             state.dailyDelta = action.payload - state.budget
             state.budget = action.payload
             state.day += 1
-            state.data[(state.day - 1) % 7] = state.dailyDelta
-            state.weeklyDelta = state.data.reduce((total :number, current :number) => total + current, 0) / (Math.min(state.day, 7))
+            state.deltaData[(state.day - 1) % 7] = state.dailyDelta
+            state.weeklyDelta = state.deltaData.reduce((total :number, current :number) => total + current, 0) / (Math.min(state.day, 7))
+
+            state.weekProjection = state.budget + state.dailyDelta + (0.5 * state.dailyDelta + 0.5 * state.weeklyDelta) + 5 * state.weeklyDelta
         }
     }
 })
