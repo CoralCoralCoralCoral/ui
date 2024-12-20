@@ -3,7 +3,7 @@
 import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
 import { useCallback, useState } from "react"
-import CurrencyMonitor from "./currency"
+import BudgetMonitor from "./budget-monitor"
 
 export default function Footer() {
     const {
@@ -66,7 +66,7 @@ export default function Footer() {
                     )}
                     {gameId && !isLoading && isConnected && isInitialized && (
                         <div className="flex items-center space-x-4">
-                            <CurrencyMonitor></CurrencyMonitor>
+                            <BudgetMonitor></BudgetMonitor>
                             <span>
                                 Connected to game: <span>{gameId}</span>
                             </span>

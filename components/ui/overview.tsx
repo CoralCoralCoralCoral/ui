@@ -44,7 +44,7 @@ export default function Overview() {
 
     const handleBack = useCallback(() => {
         dispatch(updateJurisdiction(parentJurisdiction))
-    }, [parentJurisdiction])
+    }, [parentJurisdiction, dispatch])
 
     useEffect(() => {
         console.log(policy)

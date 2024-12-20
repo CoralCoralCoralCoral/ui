@@ -2,9 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import SockJS from "sockjs-client"
 import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
-import { resetCurrency } from "@/store/currency"
+import { resetBudget } from "@/store/budget"
 import { clearMetrics, updateMetrics } from "@/store/metrics"
 import { clearPolicies, updatePolicy } from "@/store/policy"
+import { setBudget } from "@/store/budget"
 
 interface Notification {
     type: "event" | "metrics"
@@ -43,6 +44,10 @@ const useGame = () => {
 
             if (event.type == "policy_update") {
                 dispatch(updatePolicy(event.payload))
+            }
+
+            if (event.type == "budget_update") {
+                dispatch(setBudget(event.payload.current_budget))
             }
         }
     }, [])
@@ -105,7 +110,7 @@ const useGame = () => {
 
         // clear metrics
         dispatch(clearMetrics())
-        dispatch(resetCurrency())
+        dispatch(resetBudget())
         dispatch(clearPolicies())
 
         const startSocket = async (gameId: string) => {
