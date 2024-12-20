@@ -9,7 +9,7 @@ export interface GameContextType {
     isPaused: boolean
     gameId: string | null
     sendCommand: (payload: any) => void
-    startGame: () => void
+    startGame: (config: any) => void
     pauseGame: () => void
     resumeGame: () => void
 }

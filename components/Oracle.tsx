@@ -4,10 +4,10 @@ import { useGameContext } from "@/game/GameContext"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { useCallback, useEffect, useState, useMemo } from "react"
 import * as AlertDialog from "@radix-ui/react-alert-dialog"
-import features from "../../features.json"
+import features from "../features.json"
 import { useDispatch } from "react-redux"
-import { Button } from "./button"
 import { updateJurisdiction } from "@/store/navigation"
+import { Button } from "@radix-ui/themes"
 
 const lads = features.reduce((acc, feature) => {
     if (feature.properties.level == "lad") {
@@ -129,7 +129,8 @@ function OracleAlert({
             <div className="w-full flex justify-end">
                 <Button
                     onClick={dismiss}
-                    className="bg-orange-500 text-white font-medium py-2 px-4 rounded-md"
+                    // className="bg-orange-500 text-white font-medium py-2 px-4 rounded-md"
+                    color="tomato"
                 >
                     Dismiss
                 </Button>

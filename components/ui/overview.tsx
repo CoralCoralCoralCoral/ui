@@ -12,11 +12,12 @@ import CreateGameButton from "./create-game"
 import { ArrowLeft } from "lucide-react"
 import { globalJurisdiction, updateJurisdiction } from "@/store/navigation"
 import features from "../../features.json"
-import MetricsPlot from "./MetricsPlot"
 import { newPolicy, Policy, updatePolicy } from "@/store/policy"
 import { useGameContext } from "@/game/GameContext"
-import Oracle from "./Oracle"
+import Oracle from "../Oracle"
 import { Switch } from "@radix-ui/themes"
+import PolicySettings from "../PolicySettings"
+import MetricsPlot from "../MetricsPlot"
 
 export default function Overview() {
     const { sendCommand } = useGameContext()
@@ -44,7 +45,7 @@ export default function Overview() {
 
     const handleBack = useCallback(() => {
         dispatch(updateJurisdiction(parentJurisdiction))
-    }, [parentJurisdiction, dispatch])
+    }, [parentJurisdiction])
 
     useEffect(() => {
         console.log(policy)
@@ -92,9 +93,6 @@ export default function Overview() {
 
     return (
         <div className="relative w-96">
-            {/* <div className="absolute inset-y-0 z-10">
-                <SidebarUI />
-            </div> */}
             <div className="absolute inset-y-0 w-96 bg-gray-100 p-4 border-l border-gray-300 flex flex-col gap-4 z-20 h-full">
                 <div className="flex flex-col h-full">
                     <div className="flex items-center">
@@ -109,112 +107,78 @@ export default function Overview() {
                     </div>
 
                     <div className="flex flex-grow flex-col space-y-4 overflow-scroll">
-                        <h2 className="text-lg">Metrics</h2>
                         <MetricsPlot
-                            metric="infected_population"
-                            title="Infected"
+                            title="New Cases"
+                            x={{ metric: "day", label: "Day" }}
+                            y={[
+                                {
+                                    metric: "new_positive_tests",
+                                    label: "New Positive Tests",
+                                    colour: "#ff9830"
+                                }
+                            ]}
                         />
 
                         <MetricsPlot
-                            metric="new_infections"
-                            title="New Infections"
-                        />
-
-                        <MetricsPlot metric="new_tests" title="New Tests" />
-                        <MetricsPlot
-                            metric="test_capacity"
-                            title="Test Capacity"
-                        />
-                        <MetricsPlot
-                            metric="test_backlog"
-                            title="Test Backlog"
-                        />
-
-                        <MetricsPlot
-                            metric="new_positive_tests"
-                            title="New Positive Tests"
-                        />
-
-                        <MetricsPlot metric="total_tests" title="Total Tests" />
-
-                        <MetricsPlot
-                            metric="total_positive_tests"
-                            title="Total Detected Cases"
+                            title="Cumulative Cases"
+                            x={{
+                                metric: "day",
+                                label: "day"
+                            }}
+                            y={[
+                                {
+                                    metric: "total_positive_tests",
+                                    label: "Detected Cases",
+                                    colour: "#de4014"
+                                }
+                            ]}
                         />
 
                         <MetricsPlot
-                            metric="hospitalized_population"
-                            title="Hospitalized Population"
+                            title="Daily Test Capacity and Backlog"
+                            x={{ metric: "day", label: "Day" }}
+                            y={[
+                                {
+                                    metric: "test_capacity",
+                                    label: "Test Capacity"
+                                },
+                                {
+                                    metric: "new_tests",
+                                    label: "Tests Conducted",
+                                    colour: "#04ba65"
+                                },
+                                {
+                                    metric: "test_backlog",
+                                    label: "Test Backlog",
+                                    colour: "#d90000"
+                                }
+                            ]}
                         />
 
-                        <MetricsPlot metric="dead_population" title="Deaths" />
+                        <MetricsPlot
+                            title="Hospitalizations and Deaths"
+                            x={{ metric: "day", label: "Day" }}
+                            y={[
+                                {
+                                    metric: "hospitalized_population",
+                                    label: "Currently Hospitalized",
+                                    colour: "#fa8d11"
+                                },
+                                {
+                                    metric: "dead_population",
+                                    label: "Total Deaths",
+                                    colour: "#d90404"
+                                }
+                            ]}
+                        />
                     </div>
 
-                    <div className="flex flex-col py-4">
-                        <h2 className="text-lg">Policies in Effect</h2>
-                        {policy ? (
-                            <div className="flex flex-col space-y-2">
-                                {policy.is_lockdown && (
-                                    <span className="text-sm">
-                                        Active Lockdown
-                                    </span>
-                                )}
-                                {policy.is_mask_mandate && (
-                                    <span className="text-sm">
-                                        Active Mask Mandate
-                                    </span>
-                                )}
-                                {/* <div className="flex space-x-2">
-                                    <span>Testing Strategy:</span>
-                                    <span>
-                                        {policy.test_strategy.toUpperCase()}
-                                    </span>
-                                </div> */}
-                            </div>
-                        ) : (
-                            <span>No policies in effect</span>
-                        )}
+                    <div>
+                        <PolicySettings
+                            jurisdictionId={selectedJurisdiction.code}
+                        />
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex flex-col gap-4">
-                        <Button>Social Policy</Button>
-                        <Button>Upgrade Infrastructure</Button>
-                        {policy && policy.is_mask_mandate ? (
-                            <Button
-                                onClick={handleRemoveMaskMandate}
-                                className="bg-amber-500 text-white font-medium py-2 px-4 rounded-md"
-                            >
-                                Lift Mask Mandate
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleApplyMaskMandate}
-                                className="bg-amber-500 text-white font-medium py-2 px-4 rounded-md"
-                            >
-                                Apply Mask Mandate
-                            </Button>
-                        )}
-                        {/* <Button>Vaccine Investment</Button> */}
-                        {policy && policy.is_lockdown ? (
-                            <Button
-                                onClick={handleRemoveLockdown}
-                                className="bg-red-500 text-white font-medium py-2 px-4 rounded-md"
-                            >
-                                Lift Lockdown
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleApplyLockdown}
-                                className="bg-red-500 text-white font-medium py-2 px-4 rounded-md"
-                            >
-                                Lockdown
-                            </Button>
-                        )}
-                    </div>
-                    {/* <div className="flex w-full mt-8">
-                        <Oracle />
-                    </div> */}
                     <Oracle />
                 </div>
             </div>

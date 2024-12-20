@@ -49,13 +49,13 @@ const occurrenceLayer = {
         "fill-color": [
             "interpolate",
             ["linear"],
-            ["get", "infected_population"],
+            ["get", "total_positive_tests"],
             0,
             "#f0f0f0", // Light color for 0 occurrences
             10,
-            "#ff0000", // Red for 10+ occurrences
+            "#ff8000", // Orange for 10+ occurrences
             100,
-            "#ff8000", // Orange for 100+ occurrences
+            "#ff0000", // Red for 100+ occurrences
             1000,
             "#800000" // Dark red for 1000+ occurrences
         ],

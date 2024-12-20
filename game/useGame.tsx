@@ -67,6 +67,7 @@ const useGame = () => {
             if (payload.type == "quit") {
                 if (stompClient.current) {
                     stompClient.current.deactivate()
+                    stompClient.current = null
                     setIsConnected(false)
                     setGameId(null)
                 }
@@ -91,7 +92,7 @@ const useGame = () => {
         setIsPaused(false)
     }, [sendCommand])
 
-    const startGame = useCallback(() => {
+    const startGame = useCallback((config: any) => {
         if (isLoading) {
             return
         }
@@ -99,6 +100,7 @@ const useGame = () => {
         if (stompClient.current) {
             // tear down stompClient connection
             stompClient.current.deactivate()
+            stompClient.current = null
             setIsConnected(false)
             setGameId(null)
         }
@@ -157,7 +159,8 @@ const useGame = () => {
                     "http://127.0.0.1:8080/game/create",
                     {
                         method: "POST",
-                        headers: []
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(config)
                     }
                 )
 

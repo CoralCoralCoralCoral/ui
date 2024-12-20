@@ -4,6 +4,8 @@ import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
 import { useCallback, useState } from "react"
 import BudgetMonitor from "./budget-monitor"
+import NewGame from "../NewGame"
+import { Flex, Spinner, Text } from "@radix-ui/themes"
 
 export default function Footer() {
     const {
@@ -37,12 +39,7 @@ export default function Footer() {
             <div className="w-full flex justify-between items-center py-2">
                 <div className="flex space-x-2">
                     {!gameId && !isLoading && !isConnected ? (
-                        <Button
-                            className="bg-green-400 py-1 px-3 rounded-md hover:bg-green-500"
-                            onClick={startGame}
-                        >
-                            Start Game
-                        </Button>
+                        <NewGame />
                     ) : isPaused ? (
                         <Button
                             className="bg-gray-400 py-1 px-3 rounded-md hover:bg-gray-500"
@@ -62,7 +59,10 @@ export default function Footer() {
                 <div>
                     {isLoading && <span>Creating game. Please wait...</span>}
                     {gameId && !isLoading && isConnected && !isInitialized && (
-                        <span>Initializing game. Please wait...</span>
+                        <Flex align="center" gap="4">
+                            <Spinner />
+                            <Text size="2">Initializing game, please wait</Text>
+                        </Flex>
                     )}
                     {gameId && !isLoading && isConnected && isInitialized && (
                         <div className="flex items-center space-x-4">
