@@ -13,9 +13,9 @@ export default function Home() {
             {/* <Oracle /> */}
             <div className="flex flex-1 flex-col h-screen">
                 {/* Menu Bar */}
-                <div className="relative">
+                {/* <div className="relative">
                     <Menu />
-                </div>
+                </div> */}
 
                 {/* Map & Stats */}
                 <div className="flex flex-grow overflow-hidden">

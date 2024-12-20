@@ -14,7 +14,6 @@ export default function Footer() {
         isInitialized,
         isConnected,
         isPaused,
-        startGame,
         sendCommand,
         pauseGame,
         resumeGame
@@ -28,14 +27,6 @@ export default function Footer() {
 
     return (
         <div className="bg-gray-200 w-full py-2 px-8 flex justify-between items-center">
-            {/* Stats */}
-            {/* <div className="flex space-x-8">
-                <p className="text-sm font-medium">Total Infected: 1,234,567</p>
-                <p className="text-sm font-medium">GDP: £1,234,567,890</p>
-                <p className="text-sm font-medium">Budget: £30,000,000</p>
-            </div> */}
-
-            {/* Controls */}
             <div className="w-full flex justify-between items-center py-2">
                 <div className="flex space-x-2">
                     {!gameId && !isLoading && !isConnected ? (
@@ -67,9 +58,9 @@ export default function Footer() {
                     {gameId && !isLoading && isConnected && isInitialized && (
                         <div className="flex items-center space-x-4">
                             <BudgetMonitor></BudgetMonitor>
-                            <span>
+                            {/* <span>
                                 Connected to game: <span>{gameId}</span>
-                            </span>
+                            </span> */}
                             <Button
                                 className="bg-red-600 py-1 px-3 rounded-md hover:bg-red-700"
                                 onClick={handleQuit}
