@@ -113,3 +113,10 @@ body {
 .sidebar-trigger:hover {
   @apply bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))];
 }
+
+.flex-stack {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-direction: column;
+}
