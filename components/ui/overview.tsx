@@ -12,11 +12,12 @@ import CreateGameButton from "./create-game"
 import { ArrowLeft } from "lucide-react"
 import { globalJurisdiction, updateJurisdiction } from "@/store/navigation"
 import features from "../../features.json"
-import MetricsPlot from "./MetricsPlot"
+import MetricsPlot from "../MetricsPlot"
 import { newPolicy, Policy, updatePolicy } from "@/store/policy"
 import { useGameContext } from "@/game/GameContext"
-import Oracle from "./Oracle"
+import Oracle from "../Oracle"
 import { Switch } from "@radix-ui/themes"
+import PolicySettings from "../PolicySettings"
 
 export default function Overview() {
     const { sendCommand } = useGameContext()
@@ -150,7 +151,7 @@ export default function Overview() {
                         <MetricsPlot metric="dead_population" title="Deaths" />
                     </div>
 
-                    <div className="flex flex-col py-4">
+                    {/* <div className="flex flex-col py-4">
                         <h2 className="text-lg">Policies in Effect</h2>
                         {policy ? (
                             <div className="flex flex-col space-y-2">
@@ -164,20 +165,14 @@ export default function Overview() {
                                         Active Mask Mandate
                                     </span>
                                 )}
-                                {/* <div className="flex space-x-2">
-                                    <span>Testing Strategy:</span>
-                                    <span>
-                                        {policy.test_strategy.toUpperCase()}
-                                    </span>
-                                </div> */}
                             </div>
                         ) : (
                             <span>No policies in effect</span>
                         )}
-                    </div>
+                    </div> */}
 
                     {/* Actions */}
-                    <div className="flex flex-col gap-4">
+                    {/* <div className="flex flex-col gap-4">
                         <Button>Social Policy</Button>
                         <Button>Upgrade Infrastructure</Button>
                         {policy && policy.is_mask_mandate ? (
@@ -195,7 +190,6 @@ export default function Overview() {
                                 Apply Mask Mandate
                             </Button>
                         )}
-                        {/* <Button>Vaccine Investment</Button> */}
                         {policy && policy.is_lockdown ? (
                             <Button
                                 onClick={handleRemoveLockdown}
@@ -211,11 +205,18 @@ export default function Overview() {
                                 Lockdown
                             </Button>
                         )}
+                    </div> */}
+
+                    <div>
+                        <PolicySettings
+                            jurisdictionId={selectedJurisdiction.code}
+                        />
                     </div>
+
                     {/* <div className="flex w-full mt-8">
                         <Oracle />
                     </div> */}
-                    <Oracle />
+                    {/* <Oracle /> */}
                 </div>
             </div>
         </div>

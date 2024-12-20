@@ -5,7 +5,7 @@ import "@radix-ui/themes/styles.css"
 import "mapbox-gl/dist/mapbox-gl.css"
 import StoreProvider from "../store/StoreProvider"
 import GameProvider from "@/game/GameProvider"
-import { Theme, ThemePanel } from "@radix-ui/themes"
+import { Theme } from "@radix-ui/themes"
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -37,7 +37,6 @@ export default function RootLayout({
                     <StoreProvider>
                         <GameProvider>{children}</GameProvider>
                     </StoreProvider>
-                    <ThemePanel />
                 </Theme>
             </body>
         </html>

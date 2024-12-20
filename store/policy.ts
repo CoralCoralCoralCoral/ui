@@ -27,7 +27,7 @@ export const newPolicy: () => Policy = () => ({
     is_mask_mandate: false,
     is_lockdown: false,
     test_strategy: "none",
-    test_capacity_multiplier: 0
+    test_capacity_multiplier: 1
 })
 
 const initialState: () => PolicyState = () =>

@@ -1,21 +1,7 @@
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes"
-
-interface SelectOption {
-    label: string
-    value: any
-}
-
-interface FieldSchema {
-    inputType: "text" | "select" | "radio" | "range"
-    name: string
-    label: string
-    description?: string
-    selectOptions?: SelectOption[]
-    rangeMin?: number
-    rangeMax?: number
-    rangeIncrement?: number
-    defaultValue?: any
-}
+import Form, { FieldSchema, FormSection } from "./Form"
+import { useCallback, useState } from "react"
+import { useGameContext } from "@/game/GameContext"
 
 const globalParamsSchema: FieldSchema[] = [
     {
@@ -23,7 +9,7 @@ const globalParamsSchema: FieldSchema[] = [
         name: "time_step",
         label: "Time Step",
         description:
-            "The duration of time each epoch will simulate. The smaller this is, the longer it will take to simulate.",
+            "The duration of time each epoch will simulate in minutes. The smaller this is, the longer it will take to simulate an epoch.",
         defaultValue: 15
     },
     {
@@ -31,8 +17,8 @@ const globalParamsSchema: FieldSchema[] = [
         name: "num_agents",
         label: "Number of Agents",
         description:
-            "The total number of individual agents to simulate. The higher this is, the longer it will take to simulate",
-        defaultValue: "150000"
+            "The total number of individual agents to simulate. The higher this is, the longer it will take to simulate an epoch",
+        defaultValue: 150000
     }
 ]
 
@@ -99,7 +85,7 @@ const agentParamsSchema: FieldSchema[] = [
     }
 ]
 
-const pathogenParams: FieldSchema[] = [
+const pathogenParamsSchema: FieldSchema[] = [
     {
         inputType: "text",
         name: "incubation_period_mean",
@@ -133,7 +119,7 @@ const pathogenParams: FieldSchema[] = [
     {
         inputType: "text",
         name: "immunity_period_mean",
-        label: "Mean Recovery Period",
+        label: "Mean Immunity Period",
         description:
             "The average duration of immunity acquired post recovery, in days",
         defaultValue: 330
@@ -446,41 +432,109 @@ const healthcareSpaceParamsSchema: FieldSchema[] = [
     }
 ]
 
+const formSections: FormSection[] = [
+    {
+        label: "Global Parameters",
+        fields: globalParamsSchema
+    },
+    {
+        label: "Agent Parameters",
+        fields: agentParamsSchema
+    },
+    {
+        label: "Pathogen Parameters",
+        fields: pathogenParamsSchema
+    },
+    {
+        label: "Household Parameters",
+        fields: householdParamsSchema
+    },
+    {
+        label: "Office Parameters",
+        fields: officeParamsSchema
+    },
+    {
+        label: "Social Space Parameters",
+        fields: socialSpaceParamsSchema
+    },
+    {
+        label: "Healthcare Space Parameters",
+        fields: healthcareSpaceParamsSchema
+    }
+]
+
 export default function NewGame() {
+    const { startGame } = useGameContext()
+    const [values, setValues] = useState<{ [key: string]: any }>(
+        formSections.reduce((acc, section) => {
+            acc = {
+                ...acc,
+                ...section.fields.reduce((facc, field) => {
+                    if (typeof field.defaultValue != "undefined") {
+                        facc = {
+                            ...facc,
+                            [field.name]: field.defaultValue
+                        }
+                    }
+
+                    return facc
+                }, {})
+            }
+
+            return acc
+        }, {})
+    )
+
+    const handleUpdate = useCallback(
+        ({ name, value }: { name: string; value: any }) => {
+            setValues(v => ({
+                ...v,
+                [name]: value
+            }))
+        },
+        [setValues]
+    )
+
+    const handleStart = useCallback(() => {
+        const formattedValues = {
+            ...values,
+            time_step: values.time_step * 60 * 1000,
+            incubation_period_mean:
+                values.incubation_period_mean * 24 * 60 * 60 * 1000,
+            incubation_period_sd:
+                values.incubation_period_sd * 24 * 60 * 60 * 1000,
+            recovery_period_mean:
+                values.recovery_period_mean * 24 * 60 * 60 * 1000,
+            recovery_period_sd: values.recovery_period_sd * 24 * 60 * 60 * 1000,
+            immunity_period_mean:
+                values.immunity_period_mean * 24 * 60 * 60 * 1000,
+            immunity_period_sd: values.immunity_period_sd * 24 * 60 * 60 * 1000,
+            prehospitalization_period_mean:
+                values.prehospitalization_period_mean * 24 * 60 * 60 * 1000,
+            prehospitalization_period_sd:
+                values.prehospitalization_period_sd * 24 * 60 * 60 * 1000,
+            hospitalization_period_mean:
+                values.hospitalization_period_mean * 24 * 60 * 60 * 1000,
+            hospitalization_period_sd:
+                values.hospitalization_period_sd * 24 * 60 * 60 * 1000
+        }
+
+        console.log(formattedValues)
+        startGame(formattedValues)
+    }, [startGame, values])
+
     return (
         <Dialog.Root>
             <Dialog.Trigger>
                 <Button>New Game</Button>
             </Dialog.Trigger>
-
-            <Dialog.Content maxWidth="450px">
-                <Dialog.Title>Game Configuration</Dialog.Title>
-                <Dialog.Description size="2" mb="4">
-                    You may adjust the simulation configuration before starting
-                    a new game
-                </Dialog.Description>
-
-                <Flex direction="column" gap="3">
-                    <label>
-                        <Text as="div" size="2" weight="bold">
-                            Number of Agents
-                        </Text>
-                        <Text as="div" size="1" mb="2" weight="light">
-                            The number of individual agents to simulate
-                        </Text>
-                        <TextField.Root defaultValue="150000" />
-                    </label>
-                    <label>
-                        <Text as="div" size="2" mb="1" weight="bold">
-                            Email
-                        </Text>
-                        <TextField.Root
-                            defaultValue="freja@example.com"
-                            placeholder="Enter your email"
-                        />
-                    </label>
-                </Flex>
-
+            <Dialog.Content>
+                <Dialog.Title mb="6">Game Configuration</Dialog.Title>
+                <Form
+                    sections={formSections}
+                    values={values}
+                    onUpdate={handleUpdate}
+                />
                 <Flex gap="3" mt="4" justify="end">
                     <Dialog.Close>
                         <Button variant="soft" color="gray">
@@ -488,7 +542,7 @@ export default function NewGame() {
                         </Button>
                     </Dialog.Close>
                     <Dialog.Close>
-                        <Button>Save</Button>
+                        <Button onClick={handleStart}>Start</Button>
                     </Dialog.Close>
                 </Flex>
             </Dialog.Content>
