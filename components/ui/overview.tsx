@@ -17,7 +17,7 @@ import { useGameContext } from "@/game/GameContext"
 import Oracle from "../Oracle"
 import { Switch } from "@radix-ui/themes"
 import PolicySettings from "../PolicySettings"
-import MetricsPlotV2 from "../MetricsPlotV2"
+import MetricsPlot from "../MetricsPlot"
 
 export default function Overview() {
     const { sendCommand } = useGameContext()
@@ -45,7 +45,7 @@ export default function Overview() {
 
     const handleBack = useCallback(() => {
         dispatch(updateJurisdiction(parentJurisdiction))
-    }, [parentJurisdiction, dispatch])
+    }, [parentJurisdiction])
 
     useEffect(() => {
         console.log(policy)
@@ -107,7 +107,7 @@ export default function Overview() {
                     </div>
 
                     <div className="flex flex-grow flex-col space-y-4 overflow-scroll">
-                        <MetricsPlotV2
+                        <MetricsPlot
                             title="New Cases"
                             x={{ metric: "day", label: "Day" }}
                             y={[
@@ -119,7 +119,7 @@ export default function Overview() {
                             ]}
                         />
 
-                        <MetricsPlotV2
+                        <MetricsPlot
                             title="Cumulative Cases"
                             x={{
                                 metric: "day",
@@ -134,7 +134,7 @@ export default function Overview() {
                             ]}
                         />
 
-                        <MetricsPlotV2
+                        <MetricsPlot
                             title="Daily Test Capacity and Backlog"
                             x={{ metric: "day", label: "Day" }}
                             y={[
@@ -155,7 +155,7 @@ export default function Overview() {
                             ]}
                         />
 
-                        <MetricsPlotV2
+                        <MetricsPlot
                             title="Hospitalizations and Deaths"
                             x={{ metric: "day", label: "Day" }}
                             y={[
