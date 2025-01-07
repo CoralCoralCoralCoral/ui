@@ -15,7 +15,6 @@ export default function Footer() {
         isInitialized,
         isConnected,
         isPaused,
-        startGame,
         sendCommand,
         pauseGame,
         resumeGame
