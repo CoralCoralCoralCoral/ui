@@ -32,7 +32,7 @@ const agentParamsSchema: FieldSchema[] = [
         rangeMin: 0,
         rangeMax: 1,
         rangeIncrement: 0.01,
-        defaultValue: 0.7
+        defaultValue: 0.5
     },
     {
         inputType: "range",
@@ -92,14 +92,14 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Incubation Period",
         description:
             "The average time it takes for an exposed host to develop disease, in days",
-        defaultValue: 3
+        defaultValue: 7
     },
     {
         inputType: "text",
         name: "incubation_period_sd",
         label: "Standard Deviation of Incubation Period",
         description: "The standard deviation of incubation period, in days",
-        defaultValue: 0.333
+        defaultValue: 3
     },
     {
         inputType: "text",
@@ -107,14 +107,14 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Recovery Period",
         description:
             "The average time it takes for illness to subside, in days",
-        defaultValue: 7
+        defaultValue: 21
     },
     {
         inputType: "text",
         name: "recovery_period_sd",
         label: "Standard Deviation of Recovery Period",
         description: "The standard deviation of recovery period, in days",
-        defaultValue: 2
+        defaultValue: 5
     },
     {
         inputType: "text",
@@ -122,14 +122,14 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Immunity Period",
         description:
             "The average duration of immunity acquired post recovery, in days",
-        defaultValue: 330
+        defaultValue: 60
     },
     {
         inputType: "text",
         name: "immunity_period_sd",
         label: "Standard Deviation of Immunity Period",
         description: "The standard deviation of immunity period, in days",
-        defaultValue: 90
+        defaultValue: 15
     },
     {
         inputType: "text",
@@ -137,7 +137,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Prehospitalization Period",
         description:
             "The average duration between developing symptoms and becoming hospitalized in the case where agent does become hospitalized, in days",
-        defaultValue: 3
+        defaultValue: 7
     },
     {
         inputType: "text",
@@ -145,7 +145,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Standard Deviation of Prehospitalization Period",
         description:
             "The standard deviation of prehospitalization period, in days",
-        defaultValue: 0.333
+        defaultValue: 3
     },
     {
         inputType: "text",
@@ -153,7 +153,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Hospitalization Period",
         description:
             "The average duration of hospitalization for an agent that becomes hospitalized, in days",
-        defaultValue: 3
+        defaultValue: 21
     },
     {
         inputType: "text",
@@ -161,7 +161,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Standard Deviation of Hospitalization Period",
         description:
             "The standard deviation of hospitalization period, in days",
-        defaultValue: 0.333
+        defaultValue: 5
     },
     {
         inputType: "text",
@@ -169,7 +169,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Mean Quanta Emission Rate",
         description:
             "The average amount of quanta emitted by an infectious individual. The unit is quanta per hour as defined in the Wells-Riley model of airbone transmission",
-        defaultValue: 500
+        defaultValue: 150
     },
     {
         inputType: "text",
@@ -177,7 +177,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         label: "Standard Deviation of Quanta Emission Rate",
         description:
             "The standard deviation of quanta emission rate, in quanta per hour",
-        defaultValue: 150
+        defaultValue: 25
     },
     {
         inputType: "range",
@@ -199,7 +199,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         rangeMin: 0,
         rangeMax: 1,
         rangeIncrement: 0.01,
-        defaultValue: 0.75
+        defaultValue: 0.2
     },
     {
         inputType: "range",
@@ -210,7 +210,7 @@ const pathogenParamsSchema: FieldSchema[] = [
         rangeMin: 0,
         rangeMax: 1,
         rangeIncrement: 0.01,
-        defaultValue: 0.15
+        defaultValue: 0.05
     }
 ]
 
@@ -406,7 +406,7 @@ const healthcareSpaceParamsSchema: FieldSchema[] = [
         name: "test_capacity_sd",
         label: "Standard Deviation of Daily Test Capacity",
         description: "The standard deviation of daily test capacity",
-        defaultValue: 150
+        defaultValue: 15
     },
     {
         inputType: "range",
@@ -416,8 +416,8 @@ const healthcareSpaceParamsSchema: FieldSchema[] = [
             "The probability of getting a true positive result. In other words, the probability that the test result is positive given that the subject is infected",
         rangeMin: 0,
         rangeMax: 1,
-        rangeIncrement: 0.01,
-        defaultValue: 0.7
+        rangeIncrement: 0.001,
+        defaultValue: 0.85
     },
     {
         inputType: "range",
@@ -427,8 +427,8 @@ const healthcareSpaceParamsSchema: FieldSchema[] = [
             "The probability of getting a true negative result. In other words, the probability that the test result is negative given that the subject is not infected",
         rangeMin: 0,
         rangeMax: 1,
-        rangeIncrement: 0.01,
-        defaultValue: 0.999
+        rangeIncrement: 0.001,
+        defaultValue: 0.998
     }
 ]
 

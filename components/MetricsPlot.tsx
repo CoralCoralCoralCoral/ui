@@ -84,7 +84,7 @@ const MetricsPlot: React.FC<MetricsPlotV2Props> = ({ x, y, title }) => {
                     display: false
                     // text: metric
                 },
-                beginAtZero: true
+                beginAtZero: false
             }
         }
     }

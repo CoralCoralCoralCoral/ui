@@ -21,6 +21,8 @@ export interface Metrics {
     total_positive_tests: number
     test_backlog: number
     test_capacity: number
+    new_cases: number
+    total_cases: number
 }
 
 export interface MetricsState {
@@ -47,7 +49,9 @@ const newMetrics: () => Metrics = () => ({
     total_tests: 0,
     total_positive_tests: 0,
     test_backlog: 0,
-    test_capacity: 0
+    test_capacity: 0,
+    new_cases: 0,
+    total_cases: 0
 })
 
 const initialState: () => MetricsState = () =>

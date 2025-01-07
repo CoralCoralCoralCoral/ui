@@ -2,10 +2,11 @@
 
 import { useGameContext } from "@/game/GameContext"
 import { Button } from "./button"
-import { useCallback, useState } from "react"
-import BudgetMonitor from "./budget-monitor"
+import { useCallback } from "react"
 import NewGame from "../NewGame"
-import { Flex, Spinner, Text } from "@radix-ui/themes"
+import { Flex, Spinner, TabNav, Text } from "@radix-ui/themes"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { updateView } from "@/store/navigation"
 
 export default function Footer() {
     const {
@@ -25,6 +26,10 @@ export default function Footer() {
             type: "quit"
         })
     }, [sendCommand])
+
+    const selectedView = useAppSelector(store => store.navigation.selectedView)
+
+    const dispatch = useAppDispatch()
 
     return (
         <div className="bg-gray-200 w-full py-2 px-8 flex justify-between items-center">
@@ -56,6 +61,27 @@ export default function Footer() {
                         </Button>
                     )}
                 </div>
+
+                {/* View Nav */}
+                <div>
+                    <TabNav.Root>
+                        <TabNav.Link
+                            onClick={() => dispatch(updateView("map"))}
+                            href="#"
+                            active={selectedView == "map"}
+                        >
+                            Map View
+                        </TabNav.Link>
+                        <TabNav.Link
+                            onClick={() => dispatch(updateView("table"))}
+                            href="#"
+                            active={selectedView == "table"}
+                        >
+                            Table View
+                        </TabNav.Link>
+                    </TabNav.Root>
+                </div>
+
                 <div>
                     {isLoading && <span>Creating game. Please wait...</span>}
                     {gameId && !isLoading && isConnected && !isInitialized && (
@@ -66,10 +92,6 @@ export default function Footer() {
                     )}
                     {gameId && !isLoading && isConnected && isInitialized && (
                         <div className="flex items-center space-x-4">
-                            <BudgetMonitor></BudgetMonitor>
-                            <span>
-                                Connected to game: <span>{gameId}</span>
-                            </span>
                             <Button
                                 className="bg-red-600 py-1 px-3 rounded-md hover:bg-red-700"
                                 onClick={handleQuit}

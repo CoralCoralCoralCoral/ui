@@ -4,7 +4,7 @@ import { Client, IMessage } from "@stomp/stompjs"
 import { useAppDispatch } from "@/store/hooks"
 import { resetBudget } from "@/store/budget"
 import { clearMetrics, updateMetrics } from "@/store/metrics"
-import { clearPolicies, updatePolicy } from "@/store/policy"
+import { clearPolicies, Policy, updatePolicy } from "@/store/policy"
 import { setBudget } from "@/store/budget"
 
 interface Notification {
@@ -15,6 +15,28 @@ interface Notification {
 interface Event {
     type: string
     payload: any
+}
+
+interface FeatureProperties {
+    level: "lad" | "msoa"
+    name: string
+    code: string
+    parent: string
+}
+
+interface Feature {
+    properties: FeatureProperties
+    geometry: any
+}
+
+interface Jurisdiction {
+    id: string
+    policy: Policy
+    feature: Feature | null
+}
+
+interface SimulationInitializedPayload {
+    jurisdictions: Jurisdiction[]
 }
 
 const useGame = () => {
@@ -39,6 +61,19 @@ const useGame = () => {
         if (body.type == "event") {
             const event: Event = body.payload
             if (event.type == "simulation_initialized") {
+                // debugging
+                console.log(event)
+
+                const payload: SimulationInitializedPayload = event.payload
+                payload.jurisdictions.forEach(jur => {
+                    dispatch(
+                        updatePolicy({
+                            jurisdiction_id: jur.id,
+                            policy: jur.policy
+                        })
+                    )
+                })
+
                 setIsInitialized(true)
             }
 
@@ -69,6 +104,8 @@ const useGame = () => {
                     stompClient.current.deactivate()
                     stompClient.current = null
                     setIsConnected(false)
+                    setIsInitialized(false)
+                    setIsPaused(false)
                     setGameId(null)
                 }
             }

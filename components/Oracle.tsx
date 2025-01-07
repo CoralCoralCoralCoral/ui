@@ -17,6 +17,14 @@ const lads = features.reduce((acc, feature) => {
     return acc
 }, {})
 
+const msoas = features.reduce((acc, feature) => {
+    if (feature.properties.level == "msoa") {
+        acc[feature.properties.code] = feature
+    }
+
+    return acc
+}, {})
+
 interface NextAlert {
     id: string
     type: string
@@ -32,34 +40,46 @@ export default function Oracle() {
 
     const nextAlert: NextAlert | null = useMemo(() => {
         for (const [code, featureMetrics] of Object.entries(metrics)) {
-            if (!lads[code]) {
-                continue
-            }
-
             if (featureMetrics.length == 0) {
                 return
             }
 
             const metric = featureMetrics[featureMetrics.length - 1]
-            if (
-                metric.infected_population > 0 &&
-                !dismissedAlerts[`${code}-spread`]
-            ) {
-                return {
-                    id: `${code}-spread`,
-                    type: "spread",
-                    feature: lads[code]
+
+            if (msoas[code]) {
+                if (
+                    metric.test_backlog > 0 &&
+                    !dismissedAlerts[`${code}-${metric.day}-backlog`]
+                ) {
+                    return {
+                        id: `${code}-${metric.day}-backlog`,
+                        type: "backlog",
+                        feature: msoas[code]
+                    }
                 }
             }
 
-            if (
-                metric.dead_population > 0 &&
-                !dismissedAlerts[`${code}-dead`]
-            ) {
-                return {
-                    id: `${code}-dead`,
-                    type: "dead",
-                    feature: lads[code]
+            if (lads[code]) {
+                // if (
+                //     metric.infected_population > 0 &&
+                //     !dismissedAlerts[`${code}-spread`]
+                // ) {
+                //     return {
+                //         id: `${code}-spread`,
+                //         type: "spread",
+                //         feature: lads[code]
+                //     }
+                // }
+
+                if (
+                    metric.dead_population > 0 &&
+                    !dismissedAlerts[`${code}-dead`]
+                ) {
+                    return {
+                        id: `${code}-dead`,
+                        type: "dead",
+                        feature: lads[code]
+                    }
                 }
             }
         }
@@ -108,18 +128,23 @@ function OracleAlert({
     feature,
     dismiss
 }: {
-    type: "spread" | "dead"
+    type: "spread" | "dead" | "backlog"
     feature: any
     dismiss: () => void
 }) {
     const title =
         type == "dead"
             ? `${feature.properties.name} has recorded the first death`
-            : `Infection has spread to ${feature.properties.name}`
+            : type == "spread"
+            ? `Infection has spread to ${feature.properties.name}`
+            : `Test capacity reached in ${feature.properties.name}`
+
     const description =
         type == "spread"
             ? "You may want to consider increased testing in this area. Infection control measures such as mask mandates and ultimately lockdown may also be considered"
-            : "Consider prioritising this area in terms of infection control and surveillance"
+            : type == "dead"
+            ? "Consider prioritising this area in terms of infection control and surveillance"
+            : "Consider increasing test capacity in this area by setting a test capacity multiplier"
 
     return (
         <div className="max-w-md flex flex-col space-y-8 p-4 rounded-md bg-white">
