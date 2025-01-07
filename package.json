@@ -20,6 +20,7 @@
     "@radix-ui/themes": "^3.1.6",
     "@reduxjs/toolkit": "^2.4.0",
     "@stomp/stompjs": "^7.0.0",
+    "@tanstack/react-table": "^8.20.6",
     "@turf/bbox": "^7.1.0",
     "@types/sockjs-client": "^1.5.4",
     "assert": "^2.1.0",

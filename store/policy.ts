@@ -1,8 +1,5 @@
-// @ts-nocheck
-
 import { createSlice } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
-import features from "../features.json"
 
 export interface PolicyState {
     [key: string]: Policy
@@ -10,51 +7,29 @@ export interface PolicyState {
 
 export interface Policy {
     is_mask_mandate: boolean
+    is_self_isolation_mandate: boolean
+    is_self_reporting_mandate: boolean
     is_lockdown: boolean
     test_strategy: "none" | "symptomatic" | "everyone"
     test_capacity_multiplier: number
+    compliance_probability: number
 }
 
 export interface PolicyUpdate {
     jurisdiction_id: string
-    is_mask_mandate: boolean
-    is_lockdown: boolean
-    test_strategy: "none" | "symptomatic" | "everyone"
-    test_capacity_multiplier: number
+    policy: Policy
 }
 
-export const newPolicy: () => Policy = () => ({
-    is_mask_mandate: false,
-    is_lockdown: false,
-    test_strategy: "none",
-    test_capacity_multiplier: 1
-})
-
-const initialState: () => PolicyState = () =>
-    features.reduce(
-        (acc, feature) => {
-            acc[feature.properties.code] = newPolicy()
-            return acc
-        },
-        {
-            GLOBAL: newPolicy()
-        }
-    )
+const initialState: PolicyState = {}
 
 export const policiesSlice = createSlice({
     name: "policies",
-    initialState: initialState(),
+    initialState,
     reducers: {
         updatePolicy: (state, action: PayloadAction<PolicyUpdate>) => {
-            state[action.payload.jurisdiction_id] = {
-                is_mask_mandate: action.payload.is_mask_mandate,
-                is_lockdown: action.payload.is_lockdown,
-                test_strategy: action.payload.test_strategy,
-                test_capacity_multiplier:
-                    action.payload.test_capacity_multiplier
-            }
+            state[action.payload.jurisdiction_id] = action.payload.policy
         },
-        clearPolicies: state => initialState()
+        clearPolicies: state => initialState
     }
 })
 

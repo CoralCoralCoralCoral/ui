@@ -10,6 +10,7 @@ export interface Jurisdiction {
 }
 
 export interface NavigationState {
+    selectedView: "map" | "table"
     selectedJurisdiction: Jurisdiction
     selectedLad: string | null
     selectedMsoa: string | null
@@ -23,6 +24,7 @@ export const globalJurisdiction: Jurisdiction = {
 }
 
 const initialState: NavigationState = {
+    selectedView: "map",
     selectedJurisdiction: globalJurisdiction,
     selectedLad: null,
     selectedMsoa: null
@@ -32,6 +34,9 @@ export const navigationSlice = createSlice({
     name: "navigation",
     initialState,
     reducers: {
+        updateView: (state, action: PayloadAction<"map" | "table">) => {
+            state.selectedView = action.payload
+        },
         updateJurisdiction: (state, action: PayloadAction<Jurisdiction>) => {
             state.selectedJurisdiction = action.payload
 
@@ -54,6 +59,6 @@ export const navigationSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateJurisdiction } = navigationSlice.actions
+export const { updateJurisdiction, updateView } = navigationSlice.actions
 
 export default navigationSlice.reducer
